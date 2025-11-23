@@ -13,6 +13,8 @@ async function main() {
     create: {
       email,
       password: hashedPassword,
+      role: 'admin',
+      emailVerified: new Date(),
     },
   });
 
