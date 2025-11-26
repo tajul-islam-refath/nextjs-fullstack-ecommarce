@@ -1,17 +1,9 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+/**
+ * This file is kept for backward compatibility
+ * All utilities have been moved to lib/auth-utils.ts
+ */
 
-export function withAdmin<TArgs extends any[], TResult>(
-  actionFn: (...args: TArgs) => Promise<TResult>
-) {
-  return async function (...args: TArgs): Promise<TResult> {
-    const session = await auth();
-
-    if (!session?.user || session.user.role !== "admin") {
-      throw new Error("Forbidden");
-    }
-
-    return actionFn(...args);
-  };
-}
+export type { ActionResult } from "../auth-utils";
+export { withAdmin } from "../auth-utils";
