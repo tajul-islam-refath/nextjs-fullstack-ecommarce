@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { ProductManagementClient } from "@/components/products/ProductManagementClient";
+import { ProductsLoadingSkeleton } from "@/components/products/ProductsLoadingSkeleton";
 import { paginationConfig } from "@/lib/config";
 
 export const metadata = {
@@ -48,11 +49,11 @@ export default async function ProductsPage({
       fetchAllCategories(),
     ]);
 
-    const categories = categoriesResult.data?.categories || [];
+    const categories = categoriesResult.data || [];
 
     return (
       <div className="container mx-auto py-6">
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<ProductsLoadingSkeleton />}>
           <ProductManagementClient
             initialProducts={productsResult.data}
             initialPagination={productsResult.pagination}
