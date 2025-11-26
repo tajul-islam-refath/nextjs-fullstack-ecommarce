@@ -63,11 +63,135 @@ model VerificationToken {
 }
 
 model Category {
-  id        String   @id @default(cuid())
-  name      String
-  slug      String   @unique
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?   @db.Text
+  image       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+
+  @@index([slug])
+}
+
+// Main Product Model
+model Product {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String? @db.Text
+  categoryId  String
+
+  // Base pricing (used when no variants)
+  basePrice Decimal  @db.Decimal(10, 2)
+  salePrice Decimal? @db.Decimal(10, 2)
+  costPrice Decimal? @db.Decimal(10, 2) // For profit calculation
+
+  // Inventory (used when no variants)
+  stock Int     @default(0)
+  sku   String? @unique
+
+  // Featured type (Latest, Hot, Popular, or null for regular products)
+  featuredType FeaturedType?
+
+  // Variant configuration
+  hasVariants Boolean @default(false)
+
+  // SEO
+  metaTitle       String?
+  metaDescription String? @db.Text
+  metaKeywords    String?
+
+  // Additional fields
+  weight     Decimal? @db.Decimal(10, 2) // in kg
+  dimensions String? // JSON: {length, width, height}
+
+  // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Relations
+  category       Category         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  images         ProductImage[]
+  variants       ProductVariant[]
+  variantOptions VariantOption[]
+
   @@index([slug])
+  @@index([categoryId])
+  @@index([featuredType])
+  @@index([createdAt])
+}
+
+// Product Images
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  url       String
+  alt       String?
+  position  Int      @default(0) // For ordering images
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([isPrimary])
+}
+
+// Variant Options (e.g., "Size", "Color")
+model VariantOption {
+  id        String   @id @default(cuid())
+  productId String
+  name      String // e.g., "Size", "Color"
+  values    String[] // e.g., ["S", "M", "L"] or ["Red", "Blue"]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, name]) // Only one "Size" option per product
+  @@index([productId])
+}
+
+// Product Variants (specific combinations)
+model ProductVariant {
+  id        String @id @default(cuid())
+  productId String
+
+  // Variant identification
+  sku     String @unique
+  name    String // e.g., "Red - Large"
+  options String // JSON: {"Color": "Red", "Size": "Large"}
+
+  // Pricing
+  price     Decimal  @db.Decimal(10, 2)
+  salePrice Decimal? @db.Decimal(10, 2)
+  costPrice Decimal? @db.Decimal(10, 2)
+
+  // Inventory
+  stock Int @default(0)
+
+  // Variant-specific image
+  imageUrl String?
+
+  // Status
+  isActive Boolean @default(true)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([sku])
+  @@index([isActive])
+}
+
+// Enums
+enum FeaturedType {
+  LATEST
+  HOT
+  POPULAR
 }

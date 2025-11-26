@@ -1,6 +1,6 @@
 /**
  * Application Configuration
- * 
+ *
  * Centralized configuration for the application
  * Environment variables and constants
  */
@@ -13,13 +13,13 @@ export const getBaseUrl = (): string => {
   if (process.env.NEXT_PUBLIC_APP_URL) {
     return process.env.NEXT_PUBLIC_APP_URL;
   }
-  
+
   // Development fallback
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }
-  
-  return 'http://localhost:3000';
+
+  return "http://localhost:3000";
 };
 
 /**
@@ -28,8 +28,9 @@ export const getBaseUrl = (): string => {
 export const apiConfig = {
   baseUrl: getBaseUrl(),
   endpoints: {
-    categories: '/api/categories',
-    categoriesRevalidate: '/api/categories/revalidate',
+    categories: "/api/categories",
+    categoriesRevalidate: "/api/categories/revalidate",
+    products: "/api/products",
   },
 } as const;
 
@@ -39,7 +40,11 @@ export const apiConfig = {
 export const cacheConfig = {
   categories: {
     revalidate: 3600, // 1 hour in seconds
-    tags: ['categories'],
+    tags: ["categories"],
+  },
+  products: {
+    revalidate: 3600, // 1 hour in seconds
+    tags: ["products"],
   },
 };
 
