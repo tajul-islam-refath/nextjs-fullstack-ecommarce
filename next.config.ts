@@ -6,6 +6,12 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "10mb",
     },
   },
+  logging: {
+    fetches: {
+      fullUrl: true,
+      hmrRefreshes: false, // set to true to also log HMR cache hits
+    },
+  },
 };
 
 export default nextConfig;

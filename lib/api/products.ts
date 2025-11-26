@@ -16,6 +16,7 @@ export async function fetchProducts(params: Record<string, string | number>) {
   }?${query.toString()}`;
 
   const response = await fetch(apiUrl, {
+    cache: "force-cache",
     next: {
       tags: cacheConfig.products.tags,
     },

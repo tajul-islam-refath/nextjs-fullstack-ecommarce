@@ -7,6 +7,7 @@ export async function fetchCategories(
   const apiUrl = `${apiConfig.baseUrl}${apiConfig.endpoints.categories}?page=${page}&limit=${limit}`;
 
   const response = await fetch(apiUrl, {
+    cache: "force-cache",
     next: {
       tags: cacheConfig.categories.tags,
     },

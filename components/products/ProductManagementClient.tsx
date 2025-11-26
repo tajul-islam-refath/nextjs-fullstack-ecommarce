@@ -1,6 +1,12 @@
 "use client";
 
-import { Plus, Trash2, Package, Image as ImageIcon } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Package,
+  Image as ImageIcon,
+  Pencil,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DeleteConfirmDialog } from "@/components/common/DeleteConfirmDialog";
 import {
@@ -139,6 +145,17 @@ export function ProductManagementClient({
       className: "text-right",
       render: (product) => (
         <div className="flex justify-end gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            aria-label={`Edit ${product.name}`}
+            className="hover:bg-blue-50 hover:border-blue-200"
+          >
+            <a href={`/admin/products/${product.id}/edit`}>
+              <Pencil className="h-4 w-4 text-blue-600" />
+            </a>
+          </Button>
           <Button
             variant="outline"
             size="sm"
