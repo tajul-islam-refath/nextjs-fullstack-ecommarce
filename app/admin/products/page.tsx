@@ -43,7 +43,12 @@ export default async function ProductsPage({
   };
 
   try {
-    const [productsResult] = await Promise.all([fetchProducts(productsParams)]);
+    const [productsResult, categoriesResult] = await Promise.all([
+      fetchProducts(productsParams),
+      fetchAllCategories(),
+    ]);
+
+    const categories = categoriesResult.data?.categories || [];
 
     return (
       <div className="container mx-auto py-6">
@@ -51,6 +56,7 @@ export default async function ProductsPage({
           <ProductManagementClient
             initialProducts={productsResult.data}
             initialPagination={productsResult.pagination}
+            categories={categories}
           />
         </Suspense>
       </div>

@@ -10,16 +10,19 @@ import {
 } from "@/components/common/DataTableWithPagination";
 import { useProductManagement } from "@/hooks/useProductManagement";
 import { usePagination } from "@/hooks/usePagination";
+import { ProductFilters } from "./ProductFilters";
 import type { ProductListItem } from "@/types/product";
 
 interface ProductManagementClientProps {
   initialProducts: ProductListItem[];
   initialPagination: PaginationData;
+  categories: { id: string; name: string }[];
 }
 
 export function ProductManagementClient({
   initialProducts,
   initialPagination,
+  categories,
 }: ProductManagementClientProps) {
   const { isPending, handlePageChange, handleLimitChange } = usePagination(
     initialPagination.totalPages,
@@ -37,7 +40,7 @@ export function ProductManagementClient({
       render: (product) => (
         <div className="flex items-center gap-3">
           {/* Product Image */}
-          <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden">
+          <div className="shrink-0 w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden">
             {product.images && product.images.length > 0 ? (
               <img
                 src={product.images[0].url}
@@ -167,6 +170,9 @@ export function ProductManagementClient({
           </a>
         </Button>
       </div>
+
+      {/* Filters */}
+      <ProductFilters categories={categories} />
 
       {/* Data Table with Pagination */}
       <DataTableWithPagination
