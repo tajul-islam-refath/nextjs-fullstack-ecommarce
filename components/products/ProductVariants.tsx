@@ -25,7 +25,8 @@ import { Badge } from "@/components/ui/badge";
 import { CreateProductInput } from "@/lib/validations/product";
 
 export function ProductVariants() {
-  const { control, watch, setValue } = useFormContext<CreateProductInput>();
+  const { control, watch, setValue, getValues } =
+    useFormContext<CreateProductInput>();
 
   // Manage Variant Options (e.g. Color, Size)
   const {
@@ -52,24 +53,33 @@ export function ProductVariants() {
   // Helper to add a value to an option
   const addValueToOption = (index: number, value: string) => {
     if (!value) return;
-    const currentValues = watch(`variantOptions.${index}.values`) || [];
+    const currentValues = getValues(`variantOptions.${index}.values`) || [];
     if (!currentValues.includes(value)) {
-      setValue(`variantOptions.${index}.values`, [...currentValues, value]);
+      setValue(`variantOptions.${index}.values`, [...currentValues, value], {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
     }
   };
 
   // Helper to remove a value from an option
   const removeValueFromOption = (index: number, valueToRemove: string) => {
-    const currentValues = watch(`variantOptions.${index}.values`) || [];
+    const currentValues = getValues(`variantOptions.${index}.values`) || [];
     setValue(
       `variantOptions.${index}.values`,
-      currentValues.filter((v) => v !== valueToRemove)
+      currentValues.filter((v) => v !== valueToRemove),
+      {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      }
     );
   };
 
   // Generate Variants based on Options
   const generateVariants = () => {
-    const options = watch("variantOptions") || [];
+    const options = getValues("variantOptions") || [];
     if (options.length === 0) return;
 
     // Cartesian product helper
@@ -94,7 +104,7 @@ export function ProductVariants() {
       }, {} as Record<string, string>);
 
       // Check if variant already exists to preserve values
-      const existingVariant = (watch("variants") || []).find(
+      const existingVariant = (getValues("variants") || []).find(
         (v) => v.name === name
       );
 
@@ -103,8 +113,8 @@ export function ProductVariants() {
         options: JSON.stringify(optionsMap),
         sku:
           existingVariant?.sku ||
-          `${watch("sku") || "SKU"}-${combination.join("-").toUpperCase()}`,
-        price: existingVariant?.price || watch("basePrice") || 0,
+          `${getValues("sku") || "SKU"}-${combination.join("-").toUpperCase()}`,
+        price: existingVariant?.price || getValues("basePrice") || 0,
         salePrice: existingVariant?.salePrice,
         costPrice: existingVariant?.costPrice,
         stock: existingVariant?.stock || 0,
