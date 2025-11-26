@@ -26,7 +26,7 @@ export type ProductPaginationQuery = z.infer<
 
 // Product image schema
 export const productImageSchema = z.object({
-  url: z.string().url("Invalid image URL"),
+  url: z.string(),
   alt: z.string().optional(),
   position: z.number().int().nonnegative(),
   isPrimary: z.boolean(),

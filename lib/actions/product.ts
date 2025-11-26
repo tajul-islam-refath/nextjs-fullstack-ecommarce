@@ -96,7 +96,7 @@ export const createProductAction = withAdmin(
 
       const product = await productService.createProduct(productData);
 
-      revalidateTag("products", "products");
+      revalidateTag("products", "max");
       revalidatePath("/admin/products");
       revalidatePath("/api/products");
 
@@ -179,7 +179,7 @@ export const updateProductAction = withAdmin(
 
       const product = await productService.updateProduct(id, productData);
 
-      revalidateTag("products", "products");
+      revalidateTag("products", "max");
       revalidatePath("/admin/products");
       revalidatePath("/api/products");
 
@@ -210,7 +210,7 @@ export const deleteProductAction = withAdmin(
       const productService = new ProductService(prisma);
       await productService.deleteProduct(id);
 
-      revalidateTag("products", "products");
+      revalidateTag("products", "max");
       revalidatePath("/admin/products");
       revalidatePath("/api/products");
 

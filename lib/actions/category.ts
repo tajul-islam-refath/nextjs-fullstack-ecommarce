@@ -18,7 +18,9 @@ import { revalidatePath, revalidateTag } from "next/cache";
  * Protected: Admin only
  */
 export const createCategoryAction = withAdmin(
-  async (data: unknown): Promise<ActionResult<{ id: string; name: string; slug: string }>> => {
+  async (
+    data: unknown
+  ): Promise<ActionResult<{ id: string; name: string; slug: string }>> => {
     try {
       // Validate input
       const validated = createCategorySchema.parse(data);
@@ -30,7 +32,7 @@ export const createCategoryAction = withAdmin(
       const category = await categoryService.createCategory(validated);
 
       // Revalidate category cache
-      revalidateTag("categories", "default");
+      revalidateTag("categories", "max");
       revalidatePath("/admin/categories");
       revalidatePath("/api/categories", "layout");
 
@@ -103,7 +105,7 @@ export const updateCategoryAction = withAdmin(
       const category = await categoryService.updateCategory(id, validated);
 
       // Revalidate category cache
-      revalidateTag("categories", "default");
+      revalidateTag("categories", "max");
       revalidatePath("/admin/categories");
       revalidatePath("/api/categories", "layout");
 
@@ -176,7 +178,7 @@ export const deleteCategoryAction = withAdmin(
       await categoryService.deleteCategory(id);
 
       // Revalidate category cache
-      revalidateTag("categories", "default");
+      revalidateTag("categories", "max");
       revalidatePath("/admin/categories");
       revalidatePath("/api/categories", "layout");
 
@@ -189,7 +191,7 @@ export const deleteCategoryAction = withAdmin(
       if (error instanceof ZodError) {
         return {
           success: false,
-          error:       error.issues[0].message,
+          error: error.issues[0].message,
         };
       }
 
@@ -224,11 +226,15 @@ export const deleteCategoryAction = withAdmin(
  * Get paginated categories
  * Public access
  */
-export async function getCategoriesAction(
-  params?: unknown
-): Promise<
+export async function getCategoriesAction(params?: unknown): Promise<
   ActionResult<{
-    categories: Array<{ id: string; name: string; slug: string; createdAt: Date; updatedAt: Date }>;
+    categories: Array<{
+      id: string;
+      name: string;
+      slug: string;
+      createdAt: Date;
+      updatedAt: Date;
+    }>;
     pagination: {
       page: number;
       limit: number;
@@ -266,7 +272,7 @@ export async function getCategoriesAction(
     if (error instanceof ZodError) {
       return {
         success: false,
-        error:       error.issues[0].message,
+        error: error.issues[0].message,
       };
     }
 
@@ -287,14 +293,14 @@ export async function getCategoryByIdAction(
   id: string
 ): Promise<ActionResult<{ id: string; name: string; slug: string } | null>> {
   try {
-      // Validate ID
-      categoryIdSchema.parse({ id });
+    // Validate ID
+    categoryIdSchema.parse({ id });
 
-      // Create service instance
-      const categoryService = new CategoryService(prisma);
+    // Create service instance
+    const categoryService = new CategoryService(prisma);
 
-      // Get category
-      const category = await categoryService.getCategoryById(id);
+    // Get category
+    const category = await categoryService.getCategoryById(id);
 
     if (!category) {
       return {
@@ -316,7 +322,7 @@ export async function getCategoryByIdAction(
     if (error instanceof ZodError) {
       return {
         success: false,
-        error:       error.issues[0].message,
+        error: error.issues[0].message,
       };
     }
 
