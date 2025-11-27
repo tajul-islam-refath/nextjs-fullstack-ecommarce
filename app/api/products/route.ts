@@ -7,12 +7,6 @@ import { cacheConfig } from "@/lib/config";
 import { ZodError } from "zod";
 
 /**
- * Route Segment Config
- * Enable time-based revalidation (1 hour = 3600 seconds)
- */
-export const revalidate = cacheConfig.categories.revalidate;
-
-/**
  * GET /api/products
  *
  * Get paginated products with search and filters

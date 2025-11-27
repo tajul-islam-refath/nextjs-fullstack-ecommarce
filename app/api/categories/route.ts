@@ -7,13 +7,6 @@ import { cacheConfig } from "@/lib/config";
 import { ZodError } from "zod";
 
 /**
- * Route Segment Config
- * Enable time-based revalidation (1 hour = 3600 seconds)
- * This works alongside on-demand revalidation via revalidateTag
- */
-export const revalidate = cacheConfig.categories.revalidate;
-
-/**
  * GET /api/categories
  * Retrieves paginated list of categories with Next.js caching
  *

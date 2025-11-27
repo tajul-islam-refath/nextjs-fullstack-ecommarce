@@ -225,6 +225,7 @@ export function ProductVariants() {
                     <TableHead>Variant</TableHead>
                     <TableHead>SKU</TableHead>
                     <TableHead>Price</TableHead>
+                    <TableHead>Sale Price</TableHead>
                     <TableHead>Stock</TableHead>
                     <TableHead className="w-[50px]"></TableHead>
                   </TableRow>
@@ -265,6 +266,28 @@ export function ProductVariants() {
                                 field.onChange(parseFloat(e.target.value))
                               }
                               className="h-8 w-[100px]"
+                            />
+                          )}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <FormField
+                          control={control}
+                          name={`variants.${index}.salePrice`}
+                          render={({ field }) => (
+                            <Input
+                              type="number"
+                              step="0.01"
+                              {...field}
+                              value={field.value ?? ""}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                field.onChange(
+                                  value === "" ? undefined : parseFloat(value)
+                                );
+                              }}
+                              className="h-8 w-[100px]"
+                              placeholder="Optional"
                             />
                           )}
                         />
