@@ -27,10 +27,24 @@ interface ProductsPageProps {
 
 import { fetchProducts } from "@/lib/api/products";
 import { fetchAllCategories } from "@/lib/api/categories";
+import { cacheTag } from "next/cache";
+import { TAGS } from "@/lib/constains";
 
-export default async function ProductsPage({
+export default function ProductsPage({ searchParams }: ProductsPageProps) {
+  return (
+    <div className="container mx-auto py-6">
+      <Suspense fallback={<ProductsLoadingSkeleton />}>
+        <ProductsContent searchParams={searchParams} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function ProductsContent({
   searchParams,
-}: ProductsPageProps) {
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
   const params = await searchParams;
 
   // Set defaults
@@ -52,15 +66,11 @@ export default async function ProductsPage({
     const categories = categoriesResult.data || [];
 
     return (
-      <div className="container mx-auto py-6">
-        <Suspense fallback={<ProductsLoadingSkeleton />}>
-          <ProductManagementClient
-            initialProducts={productsResult.data}
-            initialPagination={productsResult.pagination}
-            categories={categories}
-          />
-        </Suspense>
-      </div>
+      <ProductManagementClient
+        initialProducts={productsResult.data}
+        initialPagination={productsResult.pagination}
+        categories={categories}
+      />
     );
   } catch (error) {
     return (

@@ -11,6 +11,7 @@ import {
 import { ActionResult, withAdmin } from "@/lib/auth-utils";
 import { ZodError } from "zod";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { TAGS } from "../constains";
 
 /**
  * Create a new product
@@ -96,9 +97,9 @@ export const createProductAction = withAdmin(
 
       const product = await productService.createProduct(productData);
 
-      revalidateTag("products", "max");
+      revalidateTag(TAGS.PRODUCT, "max");
       revalidatePath("/admin/products");
-      revalidatePath("/api/products");
+      revalidatePath(`/api/products`);
 
       return {
         success: true,
@@ -136,6 +137,11 @@ export const updateProductAction = withAdmin(
     data: unknown
   ): Promise<ActionResult<{ id: string; name: string }>> => {
     try {
+      const currentProduct = await prisma.product.findUnique({ where: { id } });
+      if (!currentProduct) {
+        return { success: false, error: "Product not found" };
+      }
+
       const validated = updateProductSchema.parse(data);
       const productService = new ProductService(prisma);
 
@@ -226,9 +232,10 @@ export const updateProductAction = withAdmin(
 
       const product = await productService.updateProduct(id, productData);
 
-      revalidateTag("products", "max");
+      revalidateTag(TAGS.PRODUCT, "max");
+      revalidateTag(`${TAGS.PRODUCT}-${product.slug}`, "max");
       revalidatePath("/admin/products");
-      revalidatePath("/api/products");
+      revalidatePath(`/api/products`);
 
       return {
         success: true,
@@ -255,11 +262,19 @@ export const deleteProductAction = withAdmin(
   async (id: string): Promise<ActionResult<{ message: string }>> => {
     try {
       const productService = new ProductService(prisma);
+      const product = await productService.getProductById(id);
+      if (!product) {
+        return {
+          success: false,
+          error: "Product not found",
+        };
+      }
       await productService.deleteProduct(id);
 
-      revalidateTag("products", "max");
+      revalidateTag(TAGS.PRODUCT, "max");
+      revalidateTag(`${TAGS.PRODUCT}-${product.slug}`, "max");
       revalidatePath("/admin/products");
-      revalidatePath("/api/products");
+      revalidatePath(`/api/products`);
 
       return {
         success: true,

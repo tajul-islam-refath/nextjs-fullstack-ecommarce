@@ -1,5 +1,8 @@
+import { Suspense } from "react";
 import { CategoryManagementClient } from "@/components/categories/CategoryManagementClient";
-import { apiConfig, cacheConfig, paginationConfig } from "@/lib/config";
+import { paginationConfig } from "@/lib/config";
+import { fetchCategories } from "@/lib/api/categories";
+import { Loader2 } from "lucide-react";
 
 interface SearchParams {
   page?: string;
@@ -10,25 +13,23 @@ interface CategoriesPageProps {
   searchParams: Promise<SearchParams>;
 }
 
-async function fetchCategories(page: string, limit: string) {
-  const apiUrl = `${apiConfig.baseUrl}${apiConfig.endpoints.categories}?page=${page}&limit=${limit}`;
-
-  const response = await fetch(apiUrl, {
-    next: {
-      tags: cacheConfig.categories.tags,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch categories: ${response.statusText}`);
-  }
-
-  return response.json();
+export default function CategoriesPage({ searchParams }: CategoriesPageProps) {
+  return (
+    <div className="container mx-auto py-6">
+      <Suspense
+        fallback={
+          <div className="flex h-96 items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+          </div>
+        }
+      >
+        <CategoriesContent searchParams={searchParams} />
+      </Suspense>
+    </div>
+  );
 }
 
-export default async function CategoriesPage({
-  searchParams,
-}: CategoriesPageProps) {
+async function CategoriesContent({ searchParams }: CategoriesPageProps) {
   const params = await searchParams;
   const page = params.page || String(paginationConfig.defaultPage);
   const limit = params.limit || String(paginationConfig.defaultLimit);

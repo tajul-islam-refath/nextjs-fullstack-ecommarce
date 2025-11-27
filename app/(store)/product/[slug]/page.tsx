@@ -8,6 +8,8 @@ import { ProductTabs } from "@/components/store/product/ProductTabs";
 import { ProductProvider } from "@/components/store/product/product-context";
 import { RelatedProductsSection } from "@/components/store/product/RelatedProductsSection";
 import { RelatedProductsSkeleton } from "@/components/store/product/RelatedProductsSkeleton";
+import { cacheTag } from "next/cache";
+import { TAGS } from "@/lib/constains";
 
 interface ProductPageProps {
   params: Promise<{
@@ -16,7 +18,10 @@ interface ProductPageProps {
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
+  "use cache";
   const { slug } = await params;
+  cacheTag(`${TAGS.PRODUCT}-${slug}`);
+
   const productService = new ProductService(prisma);
   const product = await productService.getProductBySlug(slug);
 
@@ -30,8 +35,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
     url: img.url,
     alt: img.alt,
   }));
-
-  console.log("product", product);
 
   return (
     <div className="min-h-screen bg-white">

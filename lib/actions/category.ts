@@ -12,6 +12,7 @@ import {
 import { ActionResult, withAdmin } from "@/lib/auth-utils";
 import { ZodError } from "zod";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { TAGS } from "../constains";
 
 /**
  * Create a new category
@@ -32,9 +33,9 @@ export const createCategoryAction = withAdmin(
       const category = await categoryService.createCategory(validated);
 
       // Revalidate category cache
-      revalidateTag("categories", "max");
+      revalidateTag(TAGS.CATEGORY, "max");
       revalidatePath("/admin/categories");
-      revalidatePath("/api/categories", "layout");
+      revalidatePath(`/api/categories`);
 
       return {
         success: true,
@@ -105,9 +106,9 @@ export const updateCategoryAction = withAdmin(
       const category = await categoryService.updateCategory(id, validated);
 
       // Revalidate category cache
-      revalidateTag("categories", "max");
+      revalidateTag(TAGS.CATEGORY, "max");
       revalidatePath("/admin/categories");
-      revalidatePath("/api/categories", "layout");
+      revalidatePath(`/api/categories`);
 
       return {
         success: true,
@@ -178,9 +179,9 @@ export const deleteCategoryAction = withAdmin(
       await categoryService.deleteCategory(id);
 
       // Revalidate category cache
-      revalidateTag("categories", "max");
+      revalidateTag(TAGS.CATEGORY, "max");
       revalidatePath("/admin/categories");
-      revalidatePath("/api/categories", "layout");
+      revalidatePath(`/api/categories`);
 
       return {
         success: true,

@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { BannerService } from "@/lib/service/banner.service";
 import { BannerCarousel } from "@/components/store/BannerCarousel";
+import { cacheTag } from "next/cache";
+import { TAGS } from "@/lib/constains";
 
 export function BannerSkeleton() {
   return (
@@ -9,6 +11,9 @@ export function BannerSkeleton() {
 }
 
 export async function BannersSection() {
+  "use cache";
+  cacheTag(TAGS.BANNER);
+
   const bannerService = new BannerService(prisma);
   const banners = await bannerService.getActiveBanners();
 

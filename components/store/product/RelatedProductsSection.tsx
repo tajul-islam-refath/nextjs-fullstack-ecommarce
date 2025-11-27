@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { ProductService } from "@/lib/service/product.service";
 import { RelatedProductsCarousel } from "./RelatedProductsCarousel";
+import { cacheTag } from "next/cache";
+import { TAGS } from "@/lib/constains";
 
 interface RelatedProductsSectionProps {
   productId: string;
@@ -9,6 +11,9 @@ interface RelatedProductsSectionProps {
 export async function RelatedProductsSection({
   productId,
 }: RelatedProductsSectionProps) {
+  "use cache";
+  cacheTag(TAGS.PRODUCT);
+
   const productService = new ProductService(prisma);
   const relatedProducts = await productService.getRelatedProducts(
     productId,

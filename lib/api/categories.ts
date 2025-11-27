@@ -1,4 +1,5 @@
-import { apiConfig, cacheConfig } from "@/lib/config";
+import { apiConfig } from "@/lib/config";
+import { TAGS } from "../constains";
 
 export async function fetchCategories(
   page: string | number,
@@ -9,7 +10,7 @@ export async function fetchCategories(
   const response = await fetch(apiUrl, {
     cache: "force-cache",
     next: {
-      tags: cacheConfig.categories.tags,
+      tags: [TAGS.CATEGORY],
     },
   });
 

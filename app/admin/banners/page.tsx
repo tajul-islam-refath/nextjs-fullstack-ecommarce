@@ -8,7 +8,27 @@ export const metadata = {
   description: "Manage your promotional banners",
 };
 
-export default async function BannersPage({
+export default function BannersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  return (
+    <div className="container mx-auto py-6 max-w-7xl">
+      <Suspense
+        fallback={
+          <div className="flex h-96 items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+          </div>
+        }
+      >
+        <BannersContent searchParams={searchParams} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function BannersContent({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -36,19 +56,9 @@ export default async function BannersPage({
   };
 
   return (
-    <div className="container mx-auto py-6 max-w-7xl">
-      <Suspense
-        fallback={
-          <div className="flex h-96 items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
-          </div>
-        }
-      >
-        <BannerManagementClient
-          initialBanners={banners}
-          initialPagination={pagination}
-        />
-      </Suspense>
-    </div>
+    <BannerManagementClient
+      initialBanners={banners}
+      initialPagination={pagination}
+    />
   );
 }

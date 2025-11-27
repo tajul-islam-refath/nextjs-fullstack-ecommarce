@@ -1,4 +1,5 @@
-import { apiConfig, cacheConfig } from "@/lib/config";
+import { apiConfig } from "@/lib/config";
+import { TAGS } from "../constains";
 
 /**
  * Fetch products with given query parameters.
@@ -18,7 +19,7 @@ export async function fetchProducts(params: Record<string, string | number>) {
   const response = await fetch(apiUrl, {
     cache: "force-cache",
     next: {
-      tags: cacheConfig.products.tags,
+      tags: [TAGS.PRODUCT],
     },
   });
 

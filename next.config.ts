@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
       hmrRefreshes: false, // set to true to also log HMR cache hits
     },
   },
+  cacheComponents: true,
 };
 
 export default nextConfig;

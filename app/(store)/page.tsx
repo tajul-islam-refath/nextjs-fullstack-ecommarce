@@ -18,7 +18,9 @@ export default async function HomePage() {
     <>
       {/* Banner Carousel */}
       <section className="mb-8">
-        <BannersSection />
+        <Suspense fallback={<BannerSkeleton />}>
+          <BannersSection />
+        </Suspense>
       </section>
 
       {/* Categories */}
@@ -56,4 +58,4 @@ export default async function HomePage() {
 }
 
 // Enable ISR (Incremental Static Regeneration)
-export const revalidate = 60; // Revalidate every 60 seconds
+// export const revalidate = 60; // Revalidate every 60 seconds

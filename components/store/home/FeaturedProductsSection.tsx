@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { ProductService } from "@/lib/service/product.service";
 import { ProductSection } from "@/components/store/ProductSection";
 import { FeaturedType } from "@/app/generated/prisma/client";
+import { cacheTag } from "next/cache";
+import { TAGS } from "@/lib/constains";
 
 export function ProductSkeleton() {
   return (
@@ -33,6 +35,9 @@ export async function FeaturedProductsSection({
   featuredType,
   title,
 }: FeaturedProductsSectionProps) {
+  "use cache";
+  cacheTag(TAGS.PRODUCT);
+
   const productService = new ProductService(prisma);
   const products = await productService.getFeaturedProducts(featuredType, 10);
 

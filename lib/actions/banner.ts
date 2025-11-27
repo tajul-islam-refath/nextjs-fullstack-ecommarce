@@ -11,6 +11,7 @@ import {
 import { ActionResult, withAdmin } from "@/lib/auth-utils";
 import { ZodError } from "zod";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { TAGS } from "../constains";
 
 /**
  * Create a new banner
@@ -31,9 +32,9 @@ export const createBannerAction = withAdmin(
 
       const banner = await bannerService.createBanner(bannerData);
 
-      revalidateTag("banners", "max");
+      revalidateTag(TAGS.BANNER, "max");
       revalidatePath("/admin/banners");
-      revalidatePath("/");
+      revalidatePath(`/api/banners`);
 
       return {
         success: true,
@@ -73,9 +74,9 @@ export const updateBannerAction = withAdmin(
 
       const banner = await bannerService.updateBanner(id, bannerData);
 
-      revalidateTag("banners", "max");
+      revalidateTag(TAGS.BANNER, "max");
       revalidatePath("/admin/banners");
-      revalidatePath("/");
+      revalidatePath(`/api/banners`);
 
       return {
         success: true,
@@ -103,9 +104,9 @@ export const deleteBannerAction = withAdmin(
       const bannerService = new BannerService(prisma);
       await bannerService.deleteBanner(id);
 
-      revalidateTag("banners", "max");
+      revalidateTag(TAGS.BANNER, "max");
       revalidatePath("/admin/banners");
-      revalidatePath("/");
+      revalidatePath(`/api/banners`);
 
       return {
         success: true,
@@ -128,9 +129,9 @@ export const toggleBannerStatusAction = withAdmin(
       const bannerService = new BannerService(prisma);
       const banner = await bannerService.toggleBannerStatus(id);
 
-      revalidateTag("banners", "max");
+      revalidateTag(TAGS.BANNER, "max");
       revalidatePath("/admin/banners");
-      revalidatePath("/");
+      revalidatePath(`/api/banners`);
 
       return {
         success: true,

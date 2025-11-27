@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { CategoryService } from "@/lib/service/category.service";
 import { CategoryCarousel } from "@/components/store/CategoryCarousel";
+import { cacheTag } from "next/cache";
+import { TAGS } from "@/lib/constains";
 
 export function CategorySkeleton() {
   return (
@@ -16,6 +18,9 @@ export function CategorySkeleton() {
 }
 
 export async function CategoriesSection() {
+  "use cache";
+  cacheTag(TAGS.CATEGORY);
+
   const categoryService = new CategoryService(prisma);
   const categories = await categoryService.getAllCategories();
 
