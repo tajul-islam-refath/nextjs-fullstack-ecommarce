@@ -1,8 +1,8 @@
-import { PrismaClient, Category } from '@/app/generated/prisma/client';
+import { PrismaClient, Category } from "@/app/generated/prisma/client";
 import {
   PaginatedResponse,
   createPaginationMetadata,
-} from '@/types/pagination.types';
+} from "@/types/pagination.types";
 
 /**
  * CategoryService
@@ -39,7 +39,7 @@ export class CategoryService {
         skip,
         take: limit,
         orderBy: {
-          createdAt: 'desc',
+          createdAt: "desc",
         },
       }),
     ]);
@@ -72,6 +72,18 @@ export class CategoryService {
   async getCategoryBySlug(slug: string): Promise<Category | null> {
     return this.prisma.category.findUnique({
       where: { slug },
+    });
+  }
+
+  /**
+   * Get all categories
+   * @returns All categories ordered by creation date
+   */
+  async getAllCategories(): Promise<Category[]> {
+    return this.prisma.category.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
     });
   }
 
