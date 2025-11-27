@@ -93,10 +93,6 @@ export function ProductProvider({ children, product }: ProductProviderProps) {
     const newOptions = { ...selectedOptions, [optionName]: value };
     setSelectedOptions(newOptions);
 
-    console.log("🔍 Debugging variant matching:");
-    console.log("Selected options:", newOptions);
-    console.log("All variants:", product.variants);
-
     // Find matching variant
     if (product.hasVariants) {
       const variant = product.variants.find((v) => {
@@ -113,58 +109,44 @@ export function ProductProvider({ children, product }: ProductProviderProps) {
           vOptions = v.options as Record<string, string>;
         }
 
-        console.log("Checking variant:", v.name, "with options:", vOptions);
-
         // Check if both objects have the same keys
         const vOptionKeys = Object.keys(vOptions).sort();
         const newOptionKeys = Object.keys(newOptions).sort();
 
-        console.log("Variant keys:", vOptionKeys);
-        console.log("Selected keys:", newOptionKeys);
-
         if (vOptionKeys.length !== newOptionKeys.length) {
-          console.log("❌ Key length mismatch");
           return false;
         }
 
         if (!vOptionKeys.every((key, index) => key === newOptionKeys[index])) {
-          console.log("❌ Keys don't match");
           return false;
         }
 
         // Check if all values match
-        const valuesMatch = Object.entries(newOptions).every(
+        return Object.entries(newOptions).every(
           ([key, val]) => vOptions[key] === val
         );
-
-        console.log("Values match:", valuesMatch);
-
-        return valuesMatch;
       });
 
-      console.log("✅ Found variant:", variant);
       setSelectedVariant(variant || null);
     }
   };
 
-  console.log("Selected variant", selectedVariant);
-
   const addToCart = () => {
+    // TODO: Implement actual cart logic here
     console.log("Add to cart", {
       productId: product.id,
       variantId: selectedVariant?.id,
       quantity,
     });
-    // Implement actual cart logic here
   };
 
   const buyNow = () => {
+    // TODO: Implement checkout redirect here
     console.log("Buy now", {
       productId: product.id,
       variantId: selectedVariant?.id,
       quantity,
     });
-    // Implement checkout redirect here
   };
 
   const value = {

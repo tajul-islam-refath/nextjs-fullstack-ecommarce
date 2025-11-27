@@ -228,6 +228,42 @@ export class ProductService {
   }
 
   /**
+   * Get related products by category (excluding current product)
+   */
+  async getRelatedProducts(productId: string, limit: number = 10) {
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+      select: { categoryId: true },
+    });
+
+    if (!product) {
+      return [];
+    }
+
+    return this.prisma.product.findMany({
+      where: {
+        categoryId: product.categoryId,
+        id: { not: productId },
+      },
+      take: limit,
+      orderBy: { createdAt: "desc" },
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        images: {
+          orderBy: { position: "asc" },
+          take: 1,
+        },
+      },
+    });
+  }
+
+  /**
    * Get total stock for a product (including variants)
    */
   async getTotalStock(productId: string): Promise<number> {

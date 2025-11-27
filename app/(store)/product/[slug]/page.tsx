@@ -1,10 +1,13 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
 import { ProductService } from "@/lib/service/product.service";
 import { ProductImageGallery } from "@/components/store/product/ProductImageGallery";
 import { ProductInfo } from "@/components/store/product/ProductInfo";
 import { ProductTabs } from "@/components/store/product/ProductTabs";
 import { ProductProvider } from "@/components/store/product/product-context";
+import { RelatedProductsSection } from "@/components/store/product/RelatedProductsSection";
+import { RelatedProductsSkeleton } from "@/components/store/product/RelatedProductsSkeleton";
 
 interface ProductPageProps {
   params: Promise<{
@@ -28,15 +31,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
     alt: img.alt,
   }));
 
-  // If no images, use a placeholder or handle gracefully
-  if (galleryImages.length === 0) {
-    // You might want to add a default placeholder image here
-  }
-
   return (
     <div className="min-h-screen bg-white">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Breadcrumb (Optional but recommended) */}
+        {/* Breadcrumb */}
         <nav className="mb-8 flex text-sm text-(--gray-500)">
           <a href="/" className="hover:text-(--primary-600)">
             Home
@@ -52,6 +50,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <span className="text-(--gray-900) truncate">{product.name}</span>
         </nav>
 
+        {/* Product Details */}
         <div className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16">
           {/* Product Gallery */}
           <div className="mb-8 lg:mb-0">
@@ -86,12 +85,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
 
-        {/* Product Tabs (Description, Specs, Reviews) */}
-        <ProductTabs
-          description={product.description}
-          // You can pass specifications here if you have them in your data model
-          // specifications={product.specifications}
-        />
+        {/* Product Tabs */}
+        <ProductTabs description={product.description} />
+
+        {/* Related Products with Suspense */}
+        <Suspense fallback={<RelatedProductsSkeleton />}>
+          <RelatedProductsSection productId={product.id} />
+        </Suspense>
       </div>
     </div>
   );
