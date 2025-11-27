@@ -10,7 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateProductInput } from "@/lib/validations/product";
 
@@ -78,10 +78,10 @@ export function ProductBasicInfo() {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea
+                <RichTextEditor
+                  value={field.value || ""}
+                  onChange={field.onChange}
                   placeholder="Product description..."
-                  className="min-h-[120px]"
-                  {...field}
                 />
               </FormControl>
               <FormMessage />
