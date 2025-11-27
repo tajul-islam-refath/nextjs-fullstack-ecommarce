@@ -93,17 +93,61 @@ export function ProductProvider({ children, product }: ProductProviderProps) {
     const newOptions = { ...selectedOptions, [optionName]: value };
     setSelectedOptions(newOptions);
 
+    console.log("🔍 Debugging variant matching:");
+    console.log("Selected options:", newOptions);
+    console.log("All variants:", product.variants);
+
     // Find matching variant
     if (product.hasVariants) {
       const variant = product.variants.find((v) => {
-        const vOptions = v.options as Record<string, string>;
-        return Object.entries(newOptions).every(
+        // Parse options if it's a string (from JSON field in database)
+        let vOptions: Record<string, string>;
+        if (typeof v.options === "string") {
+          try {
+            vOptions = JSON.parse(v.options);
+          } catch (e) {
+            console.error("Failed to parse variant options:", v.options);
+            return false;
+          }
+        } else {
+          vOptions = v.options as Record<string, string>;
+        }
+
+        console.log("Checking variant:", v.name, "with options:", vOptions);
+
+        // Check if both objects have the same keys
+        const vOptionKeys = Object.keys(vOptions).sort();
+        const newOptionKeys = Object.keys(newOptions).sort();
+
+        console.log("Variant keys:", vOptionKeys);
+        console.log("Selected keys:", newOptionKeys);
+
+        if (vOptionKeys.length !== newOptionKeys.length) {
+          console.log("❌ Key length mismatch");
+          return false;
+        }
+
+        if (!vOptionKeys.every((key, index) => key === newOptionKeys[index])) {
+          console.log("❌ Keys don't match");
+          return false;
+        }
+
+        // Check if all values match
+        const valuesMatch = Object.entries(newOptions).every(
           ([key, val]) => vOptions[key] === val
         );
+
+        console.log("Values match:", valuesMatch);
+
+        return valuesMatch;
       });
+
+      console.log("✅ Found variant:", variant);
       setSelectedVariant(variant || null);
     }
   };
+
+  console.log("Selected variant", selectedVariant);
 
   const addToCart = () => {
     console.log("Add to cart", {
