@@ -58,7 +58,7 @@ export function ProductTabs({ description, specifications }: ProductTabsProps) {
       <div className="py-8">
         {activeTab === "description" && (
           <div
-            className="prose prose-sm max-w-none text-(--gray-600)"
+            className="prose prose-sm max-w-none text-(--gray-600) overflow-hidden wrap-break-word"
             dangerouslySetInnerHTML={{
               __html: description || "<p>No description available.</p>",
             }}

@@ -177,6 +177,53 @@ export const updateProductAction = withAdmin(
           : undefined,
       };
 
+      // Update images if provided
+      if (validated.images !== undefined) {
+        // Delete existing images and create new ones
+        productData.images = {
+          deleteMany: {},
+          create: validated.images.map((img) => ({
+            url: img.url,
+            alt: img.alt,
+            position: img.position,
+            isPrimary: img.isPrimary,
+          })),
+        };
+      }
+
+      // Update variant options if provided
+      if (validated.variantOptions !== undefined) {
+        productData.variantOptions = {
+          deleteMany: {},
+          create: validated.variantOptions.map((opt) => ({
+            name: opt.name,
+            values: opt.values,
+          })),
+        };
+      }
+
+      // Update variants if provided
+      if (validated.variants !== undefined) {
+        productData.variants = {
+          deleteMany: {},
+          create: validated.variants.map((variant) => ({
+            sku: variant.sku,
+            name: variant.name,
+            options: variant.options,
+            price: new Prisma.Decimal(variant.price),
+            salePrice: variant.salePrice
+              ? new Prisma.Decimal(variant.salePrice)
+              : null,
+            costPrice: variant.costPrice
+              ? new Prisma.Decimal(variant.costPrice)
+              : null,
+            stock: variant.stock,
+            imageUrl: variant.imageUrl,
+            isActive: variant.isActive,
+          })),
+        };
+      }
+
       const product = await productService.updateProduct(id, productData);
 
       revalidateTag("products", "max");

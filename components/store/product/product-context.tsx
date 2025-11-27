@@ -75,9 +75,16 @@ export function ProductProvider({ children, product }: ProductProviderProps) {
 
   // Determine current price and stock
   const currentPrice = useMemo(() => {
-    return selectedVariant
-      ? Number(selectedVariant.salePrice || selectedVariant.price)
-      : Number(product.salePrice || product.basePrice);
+    if (selectedVariant) {
+      // Use salePrice if it exists and is not null, otherwise use regular price
+      return selectedVariant.salePrice != null
+        ? Number(selectedVariant.salePrice)
+        : Number(selectedVariant.price);
+    }
+    // For products without variants
+    return product.salePrice != null
+      ? Number(product.salePrice)
+      : Number(product.basePrice);
   }, [selectedVariant, product]);
 
   const originalPrice = useMemo(() => {
