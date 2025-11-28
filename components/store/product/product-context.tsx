@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { addToCart as addToCartAction } from "@/lib/actions/cart";
 import { toast } from "sonner";
+import style from "styled-jsx/style";
 
 // Types (mirrored from ProductInfo for now, but should ideally be shared)
 interface Variant {
@@ -144,7 +145,7 @@ export function ProductProvider({ children, product }: ProductProviderProps) {
     try {
       await addToCartAction(product.id, selectedVariant?.id || null, quantity);
       toast.success("Added to cart!", {
-        description: `${quantity}x ${product.name} ${
+        description: `${quantity} x ${product.name} ${
           selectedVariant ? `(${selectedVariant.name})` : ""
         }`,
         style: {
@@ -158,6 +159,10 @@ export function ProductProvider({ children, product }: ProductProviderProps) {
       toast.error("Failed to add to cart", {
         description:
           error instanceof Error ? error.message : "Please try again",
+        style: {
+          background: "#ff0000",
+          color: "#fff",
+        },
       });
     }
   };

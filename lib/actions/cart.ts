@@ -150,6 +150,7 @@ export async function addToCart(
   }
 
   // If variant is specified, verify it exists and belongs to the product
+  let availableStock = product.stock;
   if (variantId) {
     const variant = product.variants.find((v) => v.id === variantId);
     if (!variant) {
@@ -158,6 +159,7 @@ export async function addToCart(
     if (!variant.isActive) {
       throw new Error("This product variant is no longer available");
     }
+    availableStock = variant.stock;
   }
 
   // Get or create cart
@@ -172,9 +174,16 @@ export async function addToCart(
     },
   });
 
+  const currentQuantity = existingItem ? existingItem.quantity : 0;
+  const newTotalQuantity = currentQuantity + quantity;
+
+  if (newTotalQuantity > availableStock) {
+    throw new Error(`Only ${availableStock} items available in stock`);
+  }
+
   if (existingItem) {
-    // Update quantity, but cap at 99
-    const newQuantity = Math.min(existingItem.quantity + quantity, 99);
+    // Update quantity, but cap at 99 (or stock limit if lower, though checked above)
+    const newQuantity = Math.min(newTotalQuantity, 99);
     await prisma.cartItem.update({
       where: { id: existingItem.id },
       data: { quantity: newQuantity },
@@ -272,6 +281,12 @@ export async function updateCartItemQuantity(itemId: string, quantity: number) {
           guestSession: true,
         },
       },
+      product: {
+        include: {
+          variants: true,
+        },
+      },
+      variant: true,
     },
   });
 
@@ -284,6 +299,13 @@ export async function updateCartItemQuantity(itemId: string, quantity: number) {
 
   if (!isOwner) {
     throw new Error("Unauthorized: You don't own this cart item");
+  }
+
+  // Check stock
+  const availableStock = item.variant ? item.variant.stock : item.product.stock;
+
+  if (quantity > availableStock) {
+    throw new Error(`Only ${availableStock} items available in stock`);
   }
 
   // Update quantity
