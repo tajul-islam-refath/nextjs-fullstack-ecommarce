@@ -7,6 +7,7 @@ import {
   BarChart3,
   Settings,
   Image as ImageIcon,
+  Truck,
 } from "lucide-react";
 import { NavItem } from "./types";
 
@@ -34,6 +35,11 @@ export const navigationItems: NavItem[] = [
     label: "Banners",
     href: "/admin/banners",
     icon: ImageIcon,
+  },
+  {
+    label: "Delivery",
+    href: "/admin/delivery",
+    icon: Truck,
   },
   {
     label: "Orders",

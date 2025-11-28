@@ -213,6 +213,11 @@ enum FeaturedType {
   POPULAR
 }
 
+enum DeliveryZone {
+  INSIDE_DHAKA
+  OUTSIDE_DHAKA
+}
+
 model GuestSession {
   id           String   @id @default(uuid())
   sessionToken String   @unique @map("session_token")
@@ -255,4 +260,14 @@ model CartItem {
   @@index([cartId])
   @@index([productId])
   @@index([variantId])
+}
+
+model DeliveryCost {
+  id        String       @id @default(cuid())
+  zone      DeliveryZone @unique
+  cost      Decimal      @db.Decimal(10, 2)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([zone])
 }

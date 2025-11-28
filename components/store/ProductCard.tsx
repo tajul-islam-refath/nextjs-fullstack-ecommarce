@@ -5,6 +5,8 @@ import Image from "next/image";
 import { ShoppingCart, Heart } from "lucide-react";
 import { useState } from "react";
 import { formatPrice } from "@/lib/utils";
+import { addToCart } from "@/lib/actions/cart";
+import { toast } from "sonner";
 
 interface ProductCardProps {
   id: string;
@@ -14,6 +16,7 @@ interface ProductCardProps {
   salePrice?: number | null;
   image?: string;
   categoryName?: string;
+  hasVariants?: boolean;
 }
 
 export function ProductCard({
@@ -24,17 +27,47 @@ export function ProductCard({
   salePrice,
   image,
   categoryName,
+  hasVariants = false,
 }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const finalPrice = salePrice || basePrice;
   const discount = salePrice
     ? Math.round(((basePrice - salePrice) / basePrice) * 100)
     : 0;
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
-    // TODO: Implement add to cart
-    console.log("Add to cart:", id);
+
+    // If product has variants, redirect to product page instead
+    if (hasVariants) {
+      return;
+    }
+
+    setIsAddingToCart(true);
+    try {
+      await addToCart(id, null, 1);
+      toast.success("Added to cart!", {
+        description: `1 x ${name}`,
+        style: {
+          background: "#333",
+          color: "#fff",
+        },
+      });
+      // Notify cart to update
+      window.dispatchEvent(new Event("cart-updated"));
+    } catch (error) {
+      toast.error("Failed to add to cart", {
+        description:
+          error instanceof Error ? error.message : "Please try again",
+        style: {
+          background: "#ff0000",
+          color: "#fff",
+        },
+      });
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   const handleToggleWishlist = (e: React.MouseEvent) => {
@@ -87,10 +120,15 @@ export function ProductCard({
           <div className="absolute bottom-0 left-0 right-0 translate-y-full transition-transform group-hover:translate-y-0">
             <button
               onClick={handleAddToCart}
-              className="flex w-full items-center justify-center gap-2 bg-(--primary-600) py-3 text-sm font-semibold text-white transition-colors hover:bg-(--primary-700)"
+              disabled={isAddingToCart}
+              className="flex w-full items-center justify-center gap-2 bg-(--primary-600) py-3 text-sm font-semibold text-white transition-colors hover:bg-(--primary-700) disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ShoppingCart className="h-4 w-4" />
-              Add to Cart
+              {isAddingToCart
+                ? "Adding..."
+                : hasVariants
+                ? "View Product"
+                : "Add to Cart"}
             </button>
           </div>
         </div>
