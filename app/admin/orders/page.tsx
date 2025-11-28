@@ -1,8 +1,12 @@
 import { Suspense } from "react";
+import { unstable_cache } from "next/cache";
 import OrderListClient from "@/components/admin/orders/OrderListClient";
 import { OrdersLoadingSkeleton } from "@/components/admin/orders/OrdersLoadingSkeleton";
 import { paginationConfig } from "@/lib/config";
-import { fetchOrders } from "@/lib/api/orders";
+import { OrderService } from "@/lib/service/order.service";
+import { prisma } from "@/lib/prisma";
+import { getOrdersSchema } from "@/lib/validations/order";
+import { TAGS } from "@/lib/constains";
 
 export const metadata = {
   title: "Orders | Admin Dashboard",
@@ -48,7 +52,26 @@ async function OrdersContent({
   };
 
   try {
-    const ordersResult = await fetchOrders(ordersParams);
+    // Validate parameters
+    const validatedParams = getOrdersSchema.parse(ordersParams);
+
+    // Create a cache key based on query params
+    const cacheKey = JSON.stringify(validatedParams);
+
+    // Create cached function for fetching orders
+    const getCachedOrders = unstable_cache(
+      async (params: typeof validatedParams) => {
+        const orderService = new OrderService(prisma);
+        return orderService.getPaginatedOrders(params);
+      },
+      ["orders", cacheKey],
+      {
+        tags: [TAGS.ORDER],
+      }
+    );
+
+    // Fetch orders directly using service
+    const ordersResult = await getCachedOrders(validatedParams);
 
     // Serialize Decimal fields to plain numbers for client component
     const serializedOrders = ordersResult.data.map((order: any) => ({

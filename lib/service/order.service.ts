@@ -88,20 +88,6 @@ export class OrderService {
   }
 
   /**
-   * Get orders by user ID
-   */
-  async getOrdersByUserId(
-    userId: string,
-    page: number = 1,
-    limit: number = 10
-  ) {
-    return this.getPaginatedOrders({
-      page,
-      limit,
-    });
-  }
-
-  /**
    * Update order status
    */
   async updateOrderStatus(id: string, status: OrderStatus) {

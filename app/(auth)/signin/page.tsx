@@ -1,13 +1,10 @@
-import { auth } from '@/auth';
-import { redirect } from 'next/navigation';
-import SignInForm from './SignInForm';
+import { Suspense } from "react";
+import SignInPage from "./SignInPage";
 
-export default async function SignInPage() {
-  const session = await auth();
-
-  if (session?.user) {
-    redirect('/admin');
-  }
-
-  return <SignInForm />;
+export default function page() {
+  return (
+    <Suspense fallback={null}>
+      <SignInPage />
+    </Suspense>
+  );
 }

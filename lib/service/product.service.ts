@@ -93,6 +93,8 @@ export class ProductService {
               id: true,
               url: true,
               alt: true,
+              position: true,
+              isPrimary: true,
             },
           },
           variants: {

@@ -1,14 +1,14 @@
-import type { NextAuthConfig } from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
-import * as bcrypt from 'bcryptjs';
-import prisma from '@/lib/prisma';
+import type { NextAuthConfig } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import * as bcrypt from "bcryptjs";
+import prisma from "@/lib/prisma";
 
 export const authConfig = {
   providers: [
     Credentials({
       credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -43,7 +43,7 @@ export const authConfig = {
     }),
   ],
   pages: {
-    signIn: '/signin',
+    signIn: "/signin",
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -62,6 +62,7 @@ export const authConfig = {
     },
   },
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
+  secret: process.env.NEXTAUTH_SECRET,
 } satisfies NextAuthConfig;

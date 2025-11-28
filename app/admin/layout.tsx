@@ -11,6 +11,7 @@ import { DashboardLayout } from "@/components/dashboard";
  */
 
 import { Suspense } from "react";
+import { SessionProvider } from "next-auth/react";
 
 export default function AdminLayout({
   children,
@@ -39,5 +40,9 @@ async function AdminContent({ children }: { children: React.ReactNode }) {
     image: session.user.image,
   };
 
-  return <DashboardLayout user={user}>{children}</DashboardLayout>;
+  return (
+    <DashboardLayout user={user}>
+      <SessionProvider session={session}>{children}</SessionProvider>
+    </DashboardLayout>
+  );
 }

@@ -27,8 +27,6 @@ interface ProductsPageProps {
 
 import { fetchProducts } from "@/lib/api/products";
 import { fetchAllCategories } from "@/lib/api/categories";
-import { cacheTag } from "next/cache";
-import { TAGS } from "@/lib/constains";
 
 export default function ProductsPage({ searchParams }: ProductsPageProps) {
   return (

@@ -1,18 +1,12 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import {
-  createOrderSchema,
-  CreateOrderInput,
-  getOrdersSchema,
-  GetOrdersInput,
-} from "@/lib/validations/order";
+import { createOrderSchema, CreateOrderInput } from "@/lib/validations/order";
 import { getCart, clearCart } from "@/lib/actions/cart";
 import { getDeliveryCostByZoneAction } from "@/lib/actions/delivery";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { ActionResult } from "@/lib/auth-utils";
 import { TAGS } from "../constains";
-import { Prisma } from "@/app/generated/prisma/client";
 import { getOrderStatuses, orderConfig } from "@/lib/config";
 
 export async function placeOrder(
@@ -116,66 +110,6 @@ export async function placeOrder(
       return { success: false, error: error.message };
     }
     return { success: false, error: "Failed to place order" };
-  }
-}
-
-export async function getOrders(input: GetOrdersInput): Promise<
-  ActionResult<{
-    orders: any[];
-    metadata: {
-      total: number;
-      page: number;
-      limit: number;
-      totalPages: number;
-    };
-  }>
-> {
-  try {
-    const { page, limit, search, status } = getOrdersSchema.parse(input);
-
-    const skip = (page - 1) * limit;
-
-    const where: Prisma.OrderWhereInput = {
-      ...(status && { status: status as any }),
-      ...(search && {
-        OR: [
-          { id: { contains: search, mode: "insensitive" } },
-          { customerName: { contains: search, mode: "insensitive" } },
-          { customerMobile: { contains: search, mode: "insensitive" } },
-        ],
-      }),
-    };
-
-    const [orders, total] = await Promise.all([
-      prisma.order.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: { createdAt: "desc" },
-        include: {
-          items: true,
-        },
-      }),
-      prisma.order.count({ where }),
-    ]);
-
-    const totalPages = Math.ceil(total / limit);
-
-    return {
-      success: true,
-      data: {
-        orders,
-        metadata: {
-          total,
-          page,
-          limit,
-          totalPages,
-        },
-      },
-    };
-  } catch (error) {
-    console.error("Failed to fetch orders:", error);
-    return { success: false, error: "Failed to fetch orders" };
   }
 }
 

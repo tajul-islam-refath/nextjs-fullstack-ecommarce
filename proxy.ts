@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+export { auth as middleware } from "@/auth";
+
 export function proxy(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   let guestToken = request.cookies.get("guest_session")?.value;
