@@ -31,6 +31,7 @@ export const apiConfig = {
     categories: "/api/categories",
     categoriesRevalidate: "/api/categories/revalidate",
     products: "/api/products",
+    orders: "/api/orders",
   },
 } as const;
 

@@ -11,3 +11,14 @@ export const createOrderSchema = z.object({
 });
 
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;
+
+export const getOrdersSchema = z.object({
+  page: z.coerce.number().default(1),
+  limit: z.coerce.number().default(10),
+  search: z.string().optional(),
+  status: z
+    .enum(["PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"])
+    .optional(),
+});
+
+export type GetOrdersInput = z.infer<typeof getOrdersSchema>;

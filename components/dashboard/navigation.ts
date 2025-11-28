@@ -45,7 +45,6 @@ export const navigationItems: NavItem[] = [
     label: "Orders",
     href: "/admin/orders",
     icon: ShoppingCart,
-    badge: "3",
   },
   {
     label: "Customers",
