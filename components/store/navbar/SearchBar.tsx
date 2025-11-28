@@ -1,15 +1,21 @@
 "use client";
 
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export function SearchBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState(
-    searchParams.get("search") || ""
-  );
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Sync with URL params after mount (client-side only)
+  useEffect(() => {
+    const search = searchParams.get("search");
+    if (search) {
+      setSearchQuery(search);
+    }
+  }, [searchParams]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

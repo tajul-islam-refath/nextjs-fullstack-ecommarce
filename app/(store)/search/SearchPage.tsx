@@ -33,6 +33,7 @@ interface SearchPageProps {
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const params = await searchParams;
   const categoryService = new CategoryService(prisma);
   const categories = await categoryService.getAllCategories();
 
@@ -49,7 +50,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Search</BreadcrumbPage>
+              <BreadcrumbPage>{params.search}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -66,7 +67,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         {/* Product Grid */}
         <main className="flex-1">
           <Suspense fallback={<SearchProductSkeleton />}>
-            <SearchProducts searchParams={searchParams} />
+            <SearchProducts searchParams={params} />
           </Suspense>
         </main>
       </div>

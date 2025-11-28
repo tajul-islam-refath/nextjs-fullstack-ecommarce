@@ -1,6 +1,7 @@
 import { Logo } from "./navbar/Logo";
 import { SearchBar } from "./navbar/SearchBar";
 import { CartButton } from "./navbar/CartButton";
+import { Suspense } from "react";
 
 export function Navbar() {
   return (
@@ -10,8 +11,9 @@ export function Navbar() {
           {/* Logo */}
           <Logo />
 
-          {/* Search Bar */}
-          <SearchBar />
+          <Suspense fallback={null}>
+            <SearchBar />
+          </Suspense>
 
           {/* Cart Icon */}
           <CartButton />

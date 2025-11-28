@@ -6,7 +6,7 @@ import { unstable_cache } from "next/cache";
 import { TAGS } from "@/lib/constains";
 
 interface SearchProductsProps {
-  searchParams: Promise<{
+  searchParams: {
     page?: string;
     search?: string;
     categoryId?: string;
@@ -14,7 +14,7 @@ interface SearchProductsProps {
     maxPrice?: string;
     sort?: string;
     order?: string;
-  }>;
+  };
 }
 
 export async function SearchProducts({ searchParams }: SearchProductsProps) {
