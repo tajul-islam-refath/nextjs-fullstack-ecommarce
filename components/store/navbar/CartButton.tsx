@@ -10,7 +10,7 @@ export function CartButton() {
     >
       <ShoppingCart className="h-6 w-6" />
       {/* Cart Badge */}
-      {/* <CartCount /> */}
+      <CartCount />
     </Link>
   );
 }

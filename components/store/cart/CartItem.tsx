@@ -69,6 +69,7 @@ export function CartItem({ item }: CartItemProps) {
     try {
       await updateCartItemQuantity(item.id, newQuantity);
       toast.success("Cart updated");
+      window.dispatchEvent(new Event("cart-updated"));
     } catch (error) {
       toast.error("Failed to update cart");
     } finally {
@@ -81,6 +82,7 @@ export function CartItem({ item }: CartItemProps) {
     try {
       await removeFromCart(item.id);
       toast.success("Item removed from cart");
+      window.dispatchEvent(new Event("cart-updated"));
     } catch (error) {
       toast.error("Failed to remove item");
     } finally {

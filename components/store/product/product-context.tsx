@@ -147,7 +147,13 @@ export function ProductProvider({ children, product }: ProductProviderProps) {
         description: `${quantity}x ${product.name} ${
           selectedVariant ? `(${selectedVariant.name})` : ""
         }`,
+        style: {
+          background: "#333",
+          color: "#fff",
+        },
       });
+      // Notify cart to update
+      window.dispatchEvent(new Event("cart-updated"));
     } catch (error) {
       toast.error("Failed to add to cart", {
         description:

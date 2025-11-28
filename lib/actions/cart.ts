@@ -93,6 +93,36 @@ export async function getCart() {
 }
 
 /**
+ * Get total number of items in cart
+ */
+export async function getCartCount() {
+  const guestToken = await getGuestSessionToken();
+
+  if (!guestToken) return 0;
+
+  const guestSession = await prisma.guestSession.findUnique({
+    where: { sessionToken: guestToken },
+  });
+
+  if (!guestSession) return 0;
+
+  const cart = await prisma.cart.findUnique({
+    where: { guestSessionId: guestSession.id },
+    include: {
+      items: {
+        select: {
+          quantity: true,
+        },
+      },
+    },
+  });
+
+  if (!cart) return 0;
+
+  return cart.items.reduce((sum, item) => sum + item.quantity, 0);
+}
+
+/**
  * Add item to cart with validation and ownership checks
  */
 export async function addToCart(
