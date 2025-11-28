@@ -13,6 +13,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { ActionResult } from "@/lib/auth-utils";
 import { TAGS } from "../constains";
 import { Prisma } from "@/app/generated/prisma/client";
+import { getOrderStatuses, orderConfig } from "@/lib/config";
 
 export async function placeOrder(
   data: CreateOrderInput
@@ -60,8 +61,8 @@ export async function placeOrder(
           deliveryCost: deliveryCost,
           totalAmount: totalAmount,
           userId: cart.userId, // Link to user if logged in
-          status: "PENDING",
-          paymentStatus: "PENDING",
+          status: orderConfig.statuses.PENDING,
+          paymentStatus: orderConfig.paymentStatuses.PENDING,
           items: {
             create: cart.items.map((item) => ({
               productId: item.productId,
@@ -135,7 +136,7 @@ export async function getOrders(input: GetOrdersInput): Promise<
     const skip = (page - 1) * limit;
 
     const where: Prisma.OrderWhereInput = {
-      ...(status && { status }),
+      ...(status && { status: status as any }),
       ...(search && {
         OR: [
           { id: { contains: search, mode: "insensitive" } },
@@ -186,14 +187,8 @@ export async function updateOrderStatus(
   status: string
 ): Promise<ActionResult<void>> {
   try {
-    // Validate status
-    const validStatuses = [
-      "PENDING",
-      "PROCESSING",
-      "SHIPPED",
-      "DELIVERED",
-      "CANCELLED",
-    ];
+    // Validate status using centralized config
+    const validStatuses = getOrderStatuses();
     if (!validStatuses.includes(status)) {
       return { success: false, error: "Invalid order status" };
     }

@@ -4,6 +4,7 @@ import {
   OrderStatus,
 } from "@/app/generated/prisma/client";
 import type { GetOrdersInput } from "@/lib/validations/order";
+import { orderConfig } from "@/lib/config";
 
 export class OrderService {
   constructor(private prisma: PrismaClient) {}
@@ -124,13 +125,23 @@ export class OrderService {
       totalRevenue,
     ] = await Promise.all([
       this.prisma.order.count(),
-      this.prisma.order.count({ where: { status: "PENDING" } }),
-      this.prisma.order.count({ where: { status: "PROCESSING" } }),
-      this.prisma.order.count({ where: { status: "SHIPPED" } }),
-      this.prisma.order.count({ where: { status: "DELIVERED" } }),
-      this.prisma.order.count({ where: { status: "CANCELLED" } }),
+      this.prisma.order.count({
+        where: { status: orderConfig.statuses.PENDING },
+      }),
+      this.prisma.order.count({
+        where: { status: orderConfig.statuses.PROCESSING },
+      }),
+      this.prisma.order.count({
+        where: { status: orderConfig.statuses.SHIPPED },
+      }),
+      this.prisma.order.count({
+        where: { status: orderConfig.statuses.DELIVERED },
+      }),
+      this.prisma.order.count({
+        where: { status: orderConfig.statuses.CANCELLED },
+      }),
       this.prisma.order.aggregate({
-        where: { status: { not: "CANCELLED" } },
+        where: { status: { not: orderConfig.statuses.CANCELLED } },
         _sum: { totalAmount: true },
       }),
     ]);

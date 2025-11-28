@@ -66,3 +66,72 @@ export const currencyConfig = {
   code: "BDT",
   locale: "en-BD",
 };
+
+/**
+ * Order Configuration
+ */
+export const orderConfig = {
+  /**
+   * Valid order statuses
+   */
+  statuses: {
+    PENDING: "PENDING",
+    PROCESSING: "PROCESSING",
+    SHIPPED: "SHIPPED",
+    DELIVERED: "DELIVERED",
+    CANCELLED: "CANCELLED",
+  } as const,
+
+  /**
+   * Valid payment statuses
+   */
+  paymentStatuses: {
+    PENDING: "PENDING",
+    PAID: "PAID",
+    FAILED: "FAILED",
+    REFUNDED: "REFUNDED",
+  } as const,
+
+  /**
+   * Order status display information
+   */
+  statusDisplay: {
+    PENDING: {
+      label: "Pending",
+      description: "Order is pending confirmation",
+      color: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100/80",
+    },
+    PROCESSING: {
+      label: "Processing",
+      description: "Order is being processed",
+      color: "bg-blue-100 text-blue-800 hover:bg-blue-100/80",
+    },
+    SHIPPED: {
+      label: "Shipped",
+      description: "Order has been shipped",
+      color: "bg-purple-100 text-purple-800 hover:bg-purple-100/80",
+    },
+    DELIVERED: {
+      label: "Delivered",
+      description: "Order has been delivered",
+      color: "bg-green-100 text-green-800 hover:bg-green-100/80",
+    },
+    CANCELLED: {
+      label: "Cancelled",
+      description: "Order has been cancelled",
+      color: "bg-red-100 text-red-800 hover:bg-red-100/80",
+    },
+  } as const,
+} as const;
+
+/**
+ * Helper to get all valid order status values as an array
+ */
+export const getOrderStatuses = () =>
+  Object.values(orderConfig.statuses) as string[];
+
+/**
+ * Helper to get all valid payment status values as an array
+ */
+export const getPaymentStatuses = () =>
+  Object.values(orderConfig.paymentStatuses) as string[];

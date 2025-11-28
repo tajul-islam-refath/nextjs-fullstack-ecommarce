@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { deliveryZoneSchema } from "./delivery";
+import { orderConfig } from "@/lib/config";
 
 export const createOrderSchema = z.object({
   customerName: z.string().min(2, "Name must be at least 2 characters"),
@@ -17,7 +18,7 @@ export const getOrdersSchema = z.object({
   limit: z.coerce.number().default(10),
   search: z.string().optional(),
   status: z
-    .enum(["PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"])
+    .enum(Object.values(orderConfig.statuses) as [string, ...string[]])
     .optional(),
 });
 

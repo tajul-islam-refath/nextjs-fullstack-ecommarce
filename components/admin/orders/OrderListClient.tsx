@@ -19,6 +19,7 @@ import { updateOrderStatus } from "@/lib/actions/order";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { orderConfig } from "@/lib/config";
 
 interface OrderListClientProps {
   initialOrders: OrderListItem[];
@@ -42,23 +43,6 @@ export default function OrderListClient({
   }>({
     open: false,
   });
-
-  const getStatusColor = (status: OrderStatus) => {
-    switch (status) {
-      case "PENDING":
-        return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100/80";
-      case "PROCESSING":
-        return "bg-blue-100 text-blue-800 hover:bg-blue-100/80";
-      case "SHIPPED":
-        return "bg-purple-100 text-purple-800 hover:bg-purple-100/80";
-      case "DELIVERED":
-        return "bg-green-100 text-green-800 hover:bg-green-100/80";
-      case "CANCELLED":
-        return "bg-red-100 text-red-800 hover:bg-red-100/80";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
 
   const handleUpdateStatus = async (
     orderId: string,
@@ -115,8 +99,14 @@ export default function OrderListClient({
       key: "status",
       header: "Status",
       render: (order) => (
-        <Badge variant="secondary" className={getStatusColor(order.status)}>
-          {order.status}
+        <Badge
+          variant="secondary"
+          className={
+            orderConfig.statusDisplay[order.status]?.color ||
+            "bg-gray-100 text-gray-800"
+          }
+        >
+          {orderConfig.statusDisplay[order.status]?.label || order.status}
         </Badge>
       ),
     },

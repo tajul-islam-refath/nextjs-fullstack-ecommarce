@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { OrderStatus } from "@/app/generated/prisma/enums";
 import { Loader2 } from "lucide-react";
+import { orderConfig } from "@/lib/config";
 
 interface UpdateOrderStatusDialogProps {
   open: boolean;
@@ -28,30 +29,6 @@ interface UpdateOrderStatusDialogProps {
   onConfirm: (orderId: string, newStatus: OrderStatus) => Promise<void>;
   isUpdating: boolean;
 }
-
-const statusOptions = [
-  {
-    value: "PENDING",
-    label: "Pending",
-    description: "Order is pending confirmation",
-  },
-  {
-    value: "PROCESSING",
-    label: "Processing",
-    description: "Order is being prepared",
-  },
-  { value: "SHIPPED", label: "Shipped", description: "Order has been shipped" },
-  {
-    value: "DELIVERED",
-    label: "Delivered",
-    description: "Order has been delivered",
-  },
-  {
-    value: "CANCELLED",
-    label: "Cancelled",
-    description: "Order has been cancelled",
-  },
-];
 
 export function UpdateOrderStatusDialog({
   open,
@@ -70,12 +47,8 @@ export function UpdateOrderStatusDialog({
     }
   };
 
-  const currentOption = statusOptions.find(
-    (opt) => opt.value === currentStatus
-  );
-  const selectedOption = statusOptions.find(
-    (opt) => opt.value === selectedStatus
-  );
+  const currentConfig = orderConfig.statusDisplay[currentStatus];
+  const selectedConfig = orderConfig.statusDisplay[selectedStatus];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -96,10 +69,10 @@ export function UpdateOrderStatusDialog({
             </label>
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
               <div className="font-medium text-slate-900">
-                {currentOption?.label}
+                {currentConfig?.label}
               </div>
               <div className="text-xs text-slate-500">
-                {currentOption?.description}
+                {currentConfig?.description}
               </div>
             </div>
           </div>
@@ -118,16 +91,18 @@ export function UpdateOrderStatusDialog({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {statusOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    <div className="flex flex-col">
-                      <span className="font-medium">{option.label}</span>
-                      <span className="text-xs text-slate-500">
-                        {option.description}
-                      </span>
-                    </div>
-                  </SelectItem>
-                ))}
+                {Object.entries(orderConfig.statusDisplay).map(
+                  ([status, config]) => (
+                    <SelectItem key={status} value={status}>
+                      <div className="flex flex-col">
+                        <span className="font-medium">{config.label}</span>
+                        <span className="text-xs text-slate-500">
+                          {config.description}
+                        </span>
+                      </div>
+                    </SelectItem>
+                  )
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -138,7 +113,7 @@ export function UpdateOrderStatusDialog({
               <div className="text-sm text-blue-900">
                 <span className="font-medium">Status will change:</span>
                 <div className="mt-1">
-                  {currentOption?.label} → {selectedOption?.label}
+                  {currentConfig?.label} → {selectedConfig?.label}
                 </div>
               </div>
             </div>
