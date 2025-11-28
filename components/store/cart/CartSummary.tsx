@@ -1,11 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { ShoppingBag, Tag } from "lucide-react";
 import { useMemo } from "react";
 import { formatPrice } from "@/lib/utils";
 
-// Serialized types matching CartClient
 type SerializedProduct = {
   basePrice: number;
   salePrice: number | null;
@@ -51,8 +51,7 @@ export function CartSummary({ items }: CartSummaryProps) {
     };
   }, [items]);
 
-  const shipping = subtotal >= 50 ? 0 : 5.99;
-  const finalTotal = total + shipping;
+  const finalTotal = total;
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">
@@ -83,29 +82,15 @@ export function CartSummary({ items }: CartSummaryProps) {
         <div className="flex justify-between text-sm">
           <span className="text-gray-600">Shipping</span>
           <span className="font-medium text-gray-900">
-            {shipping === 0 ? (
-              <span className="text-green-600">FREE</span>
-            ) : (
-              formatPrice(shipping)
-            )}
+            {"Calculated at checkout"}
           </span>
         </div>
 
-        {subtotal < 50 && subtotal > 0 && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-            <p className="text-xs text-blue-800">
-              Add{" "}
-              <span className="font-semibold">
-                {formatPrice(50 - subtotal)}
-              </span>{" "}
-              more to get FREE shipping!
-            </p>
-          </div>
-        )}
-
         <div className="border-t border-gray-200 pt-3 mt-3">
           <div className="flex justify-between">
-            <span className="text-base font-semibold text-gray-900">Total</span>
+            <span className="text-base font-semibold text-gray-900">
+              {"Total"}
+            </span>
             <span className="text-2xl font-bold text-primary-600">
               {formatPrice(finalTotal)}
             </span>
@@ -113,10 +98,12 @@ export function CartSummary({ items }: CartSummaryProps) {
         </div>
       </div>
 
-      <Button size="lg" className="w-full bg-primary-600 hover:bg-primary-700">
-        <ShoppingBag className="h-5 w-5 mr-2" />
-        Proceed to Checkout
-      </Button>
+      <Link href="/checkout" className="w-full block">
+        <Button size="lg" className="w-full">
+          <ShoppingBag className="h-5 w-5 mr-2" />
+          Proceed to Checkout
+        </Button>
+      </Link>
 
       <div className="mt-4 space-y-2">
         <div className="flex items-center gap-2 text-xs text-gray-500">
