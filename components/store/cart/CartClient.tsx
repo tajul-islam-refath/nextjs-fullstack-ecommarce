@@ -7,6 +7,13 @@ import { CartItem } from "./CartItem";
 import { CartSummary } from "./CartSummary";
 
 // Serialized types (Decimal converted to number)
+type SerializedProductImage = {
+  id: string;
+  url: string;
+  alt: string | null;
+  isPrimary: boolean;
+};
+
 type SerializedProduct = {
   id: string;
   name: string;
@@ -27,6 +34,7 @@ type SerializedProduct = {
   dimensions: string | null;
   createdAt: Date;
   updatedAt: Date;
+  images: SerializedProductImage[];
 };
 
 type SerializedVariant = {

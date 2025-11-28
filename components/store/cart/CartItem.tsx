@@ -6,13 +6,24 @@ import { Button } from "@/components/ui/button";
 import { removeFromCart, updateCartItemQuantity } from "@/lib/actions/cart";
 import { toast } from "sonner";
 import { useState } from "react";
+import { formatPrice } from "@/lib/utils";
+import Link from "next/link";
 
 // Serialized types matching CartClient
+type SerializedProductImage = {
+  id: string;
+  url: string;
+  alt: string | null;
+  isPrimary: boolean;
+};
+
 type SerializedProduct = {
   id: string;
   name: string;
+  slug: string;
   basePrice: number;
   salePrice: number | null;
+  images: SerializedProductImage[];
 };
 
 type SerializedVariant = {
@@ -47,6 +58,12 @@ export function CartItem({ item }: CartItemProps) {
 
   const hasDiscount = price < originalPrice;
 
+  // Get image URL: variant image > primary product image > placeholder
+  const imageUrl =
+    item.variant?.imageUrl ||
+    item.product.images.find((img) => img.isPrimary)?.url ||
+    "/placeholder.png";
+
   const handleUpdateQuantity = async (newQuantity: number) => {
     setIsUpdating(true);
     try {
@@ -77,7 +94,7 @@ export function CartItem({ item }: CartItemProps) {
         {/* Product Image */}
         <div className="relative h-24 w-24 sm:h-32 sm:w-32 shrink-0 rounded-lg overflow-hidden bg-gray-100">
           <Image
-            src={item.variant?.imageUrl || "/placeholder.png"}
+            src={imageUrl}
             alt={item.product.name}
             fill
             className="object-cover"
@@ -87,9 +104,11 @@ export function CartItem({ item }: CartItemProps) {
         {/* Product Info */}
         <div className="flex-1 min-w-0">
           <div className="flex justify-between gap-4">
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-gray-900 truncate">
-                {item.product.name}
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 hover:text-primary-600">
+                <Link href={`/product/${item.product.slug}`}>
+                  {item.product.name}
+                </Link>
               </h3>
               {item.variant && (
                 <p className="text-sm text-gray-500 mt-1">
@@ -112,11 +131,11 @@ export function CartItem({ item }: CartItemProps) {
           {/* Price */}
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-xl font-bold text-primary-600">
-              ${price.toFixed(2)}
+              {formatPrice(price)}
             </span>
             {hasDiscount && (
               <span className="text-sm text-gray-500 line-through">
-                ${originalPrice.toFixed(2)}
+                {formatPrice(originalPrice)}
               </span>
             )}
           </div>
@@ -147,7 +166,7 @@ export function CartItem({ item }: CartItemProps) {
             <div className="ml-auto">
               <p className="text-sm text-gray-500">Subtotal</p>
               <p className="text-lg font-bold text-gray-900">
-                ${(price * item.quantity).toFixed(2)}
+                {formatPrice(price * item.quantity)}
               </p>
             </div>
           </div>

@@ -2,7 +2,7 @@
 
 import { Heart, ShoppingCart, Truck, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { useProduct } from "./product-context";
 interface Variant {
   id: string;
@@ -51,11 +51,11 @@ export function ProductInfo() {
         <div className="mt-2 flex items-center gap-4">
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-bold text-(--primary-600)">
-              ${currentPrice.toFixed(2)}
+              {formatPrice(currentPrice)}
             </span>
             {originalPrice > currentPrice && (
               <span className="text-lg text-(--gray-500) line-through">
-                ${originalPrice.toFixed(2)}
+                {formatPrice(originalPrice)}
               </span>
             )}
           </div>
@@ -170,7 +170,9 @@ export function ProductInfo() {
             <p className="text-sm font-medium text-(--gray-900)">
               Free Delivery
             </p>
-            <p className="text-xs text-(--gray-500)">On orders over $50</p>
+            <p className="text-xs text-(--gray-500)">
+              On orders over {formatPrice(50)}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-3">

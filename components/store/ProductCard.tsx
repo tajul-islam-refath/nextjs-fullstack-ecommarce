@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ShoppingCart, Heart } from "lucide-react";
 import { useState } from "react";
+import { formatPrice } from "@/lib/utils";
 
 interface ProductCardProps {
   id: string;
@@ -111,11 +112,11 @@ export function ProductCard({
           {/* Price */}
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-(--primary-600)">
-              ${finalPrice.toFixed(2)}
+              {formatPrice(finalPrice)}
             </span>
             {salePrice && (
               <span className="text-sm text-(--gray-500) line-through">
-                ${basePrice.toFixed(2)}
+                {formatPrice(basePrice)}
               </span>
             )}
           </div>

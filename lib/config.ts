@@ -56,3 +56,12 @@ export const paginationConfig = {
   defaultLimit: 10,
   maxLimit: 100,
 };
+
+/**
+ * Currency Configuration
+ */
+export const currencyConfig = {
+  symbol: "৳",
+  code: "BDT",
+  locale: "en-BD",
+};

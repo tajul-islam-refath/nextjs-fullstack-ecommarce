@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Tag } from "lucide-react";
 import { useMemo } from "react";
+import { formatPrice } from "@/lib/utils";
 
 // Serialized types matching CartClient
 type SerializedProduct = {
@@ -63,7 +64,7 @@ export function CartSummary({ items }: CartSummaryProps) {
         <div className="flex justify-between text-sm">
           <span className="text-gray-600">Subtotal ({items.length} items)</span>
           <span className="font-medium text-gray-900">
-            ${subtotal.toFixed(2)}
+            {formatPrice(subtotal)}
           </span>
         </div>
 
@@ -74,7 +75,7 @@ export function CartSummary({ items }: CartSummaryProps) {
               Savings
             </span>
             <span className="font-medium text-green-600">
-              -${savings.toFixed(2)}
+              -{formatPrice(savings)}
             </span>
           </div>
         )}
@@ -85,7 +86,7 @@ export function CartSummary({ items }: CartSummaryProps) {
             {shipping === 0 ? (
               <span className="text-green-600">FREE</span>
             ) : (
-              `$${shipping.toFixed(2)}`
+              formatPrice(shipping)
             )}
           </span>
         </div>
@@ -95,7 +96,7 @@ export function CartSummary({ items }: CartSummaryProps) {
             <p className="text-xs text-blue-800">
               Add{" "}
               <span className="font-semibold">
-                ${(50 - subtotal).toFixed(2)}
+                {formatPrice(50 - subtotal)}
               </span>{" "}
               more to get FREE shipping!
             </p>
@@ -106,7 +107,7 @@ export function CartSummary({ items }: CartSummaryProps) {
           <div className="flex justify-between">
             <span className="text-base font-semibold text-gray-900">Total</span>
             <span className="text-2xl font-bold text-primary-600">
-              ${finalTotal.toFixed(2)}
+              {formatPrice(finalTotal)}
             </span>
           </div>
         </div>

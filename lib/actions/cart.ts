@@ -76,7 +76,14 @@ export async function getCart() {
     include: {
       items: {
         include: {
-          product: true,
+          product: {
+            include: {
+              images: {
+                where: { isPrimary: true },
+                take: 1,
+              },
+            },
+          },
           variant: true,
         },
         orderBy: { createdAt: "desc" },

@@ -18,6 +18,7 @@ import { useProductManagement } from "@/hooks/useProductManagement";
 import { usePagination } from "@/hooks/usePagination";
 import { ProductFilters } from "./ProductFilters";
 import type { ProductListItem } from "@/types/product";
+import { formatPrice } from "@/lib/utils";
 
 interface ProductManagementClientProps {
   initialProducts: ProductListItem[];
@@ -85,11 +86,11 @@ export function ProductManagementClient({
       render: (product) => (
         <div className="flex flex-col">
           <span className="font-medium text-slate-900">
-            ${Number(product.basePrice).toFixed(2)}
+            {formatPrice(product.basePrice)}
           </span>
           {product.salePrice && Number(product.salePrice) > 0 && (
             <span className="text-xs text-green-600">
-              Sale: ${Number(product.salePrice).toFixed(2)}
+              Sale: {formatPrice(product.salePrice)}
             </span>
           )}
         </div>
