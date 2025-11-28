@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description: "Shop eco-friendly products with fast delivery and great prices",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

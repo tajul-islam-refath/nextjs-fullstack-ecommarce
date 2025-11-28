@@ -115,9 +115,11 @@ export async function generateMetadata({ params }: ProductPageProps) {
   }
 
   return {
-    title: `${product.name} | EcoShop`,
+    title: `${product.metaTitle || product.name}`,
     description:
-      product.description?.slice(0, 160) || `Buy ${product.name} at EcoShop`,
+      product.metaDescription ||
+      product.description?.slice(0, 160) ||
+      `Buy ${product.name}`,
     openGraph: {
       images: product.images[0]?.url ? [product.images[0].url] : [],
     },
