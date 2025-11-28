@@ -50,9 +50,21 @@ async function OrdersContent({
   try {
     const ordersResult = await fetchOrders(ordersParams);
 
+    // Serialize Decimal fields to plain numbers for client component
+    const serializedOrders = ordersResult.data.map((order: any) => ({
+      ...order,
+      totalAmount: Number(order.totalAmount),
+      subtotal: Number(order.subtotal),
+      deliveryCost: Number(order.deliveryCost),
+      items: order.items.map((item: any) => ({
+        ...item,
+        price: Number(item.price),
+      })),
+    }));
+
     return (
       <OrderListClient
-        initialOrders={ordersResult.data}
+        initialOrders={serializedOrders}
         initialPagination={ordersResult.pagination}
       />
     );

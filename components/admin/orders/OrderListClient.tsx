@@ -1,6 +1,7 @@
 "use client";
 
-import { Eye } from "lucide-react";
+import { useState, useTransition } from "react";
+import { Eye, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,9 +11,13 @@ import {
 } from "@/components/common/DataTableWithPagination";
 import { usePagination } from "@/hooks/usePagination";
 import { OrderFilters } from "./OrderFilters";
+import { UpdateOrderStatusDialog } from "./UpdateOrderStatusDialog";
 import { formatPrice } from "@/lib/utils";
 import { OrderStatus } from "@/app/generated/prisma/enums";
 import { OrderListItem } from "@/types/order";
+import { updateOrderStatus } from "@/lib/actions/order";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 interface OrderListClientProps {
@@ -24,10 +29,19 @@ export default function OrderListClient({
   initialOrders,
   initialPagination,
 }: OrderListClientProps) {
+  const router = useRouter();
   const { isPending, handlePageChange, handleLimitChange } = usePagination(
     initialPagination.totalPages,
     initialPagination.limit
   );
+
+  const [isPendingUpdate, startTransition] = useTransition();
+  const [statusDialog, setStatusDialog] = useState<{
+    open: boolean;
+    order?: OrderListItem;
+  }>({
+    open: false,
+  });
 
   const getStatusColor = (status: OrderStatus) => {
     switch (status) {
@@ -44,6 +58,22 @@ export default function OrderListClient({
       default:
         return "bg-gray-100 text-gray-800";
     }
+  };
+
+  const handleUpdateStatus = async (
+    orderId: string,
+    newStatus: OrderStatus
+  ) => {
+    startTransition(async () => {
+      const result = await updateOrderStatus(orderId, newStatus);
+      if (result.success) {
+        toast.success("Order status updated successfully!");
+        setStatusDialog({ open: false });
+        router.refresh();
+      } else {
+        toast.error(result.error || "Failed to update order status");
+      }
+    });
   };
 
   // Define table columns
@@ -109,6 +139,15 @@ export default function OrderListClient({
           <Button
             variant="outline"
             size="sm"
+            onClick={() => setStatusDialog({ open: true, order })}
+            aria-label={`Update status for order ${order.id}`}
+            className="hover:bg-purple-50 hover:border-purple-200"
+          >
+            <RefreshCw className="h-4 w-4 text-purple-600" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             asChild
             aria-label={`View order ${order.id}`}
             className="hover:bg-blue-50 hover:border-blue-200"
@@ -148,6 +187,18 @@ export default function OrderListClient({
         emptyMessage="No orders found."
         getRowKey={(order) => order.id}
       />
+
+      {/* Update Status Dialog */}
+      {statusDialog.order && (
+        <UpdateOrderStatusDialog
+          open={statusDialog.open}
+          onOpenChange={(open) => setStatusDialog({ open })}
+          currentStatus={statusDialog.order.status}
+          orderId={statusDialog.order.id}
+          onConfirm={handleUpdateStatus}
+          isUpdating={isPendingUpdate}
+        />
+      )}
     </div>
   );
 }

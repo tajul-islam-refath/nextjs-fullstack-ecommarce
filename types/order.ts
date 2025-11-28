@@ -5,7 +5,7 @@ export interface OrderItem {
   productName: string;
   variantName: string | null;
   quantity: number;
-  price: any; // Decimal from Prisma
+  price: number; // Serialized from Prisma Decimal
 }
 
 export interface OrderListItem {
@@ -14,15 +14,15 @@ export interface OrderListItem {
   customerMobile: string;
   customerAddress: string;
   status: OrderStatus;
-  totalAmount: any; // Decimal from Prisma
+  totalAmount: number; // Serialized from Prisma Decimal
   createdAt: Date;
   items: OrderItem[];
 }
 
 export interface OrderDetail extends OrderListItem {
   deliveryZone: string;
-  subtotal: any; // Decimal from Prisma
-  deliveryCost: any; // Decimal from Prisma
+  subtotal: number; // Serialized from Prisma Decimal
+  deliveryCost: number; // Serialized from Prisma Decimal
   paymentStatus: string;
   updatedAt: Date;
 }

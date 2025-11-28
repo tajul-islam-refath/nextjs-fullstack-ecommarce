@@ -177,3 +177,41 @@ export async function getOrders(input: GetOrdersInput): Promise<
     return { success: false, error: "Failed to fetch orders" };
   }
 }
+
+/**
+ * Update order status
+ */
+export async function updateOrderStatus(
+  orderId: string,
+  status: string
+): Promise<ActionResult<void>> {
+  try {
+    // Validate status
+    const validStatuses = [
+      "PENDING",
+      "PROCESSING",
+      "SHIPPED",
+      "DELIVERED",
+      "CANCELLED",
+    ];
+    if (!validStatuses.includes(status)) {
+      return { success: false, error: "Invalid order status" };
+    }
+
+    // Update order
+    await prisma.order.update({
+      where: { id: orderId },
+      data: { status: status as any },
+    });
+
+    // Revalidate caches
+    revalidatePath("/admin/orders");
+    revalidatePath(`/admin/orders/${orderId}`);
+    revalidateTag(TAGS.ORDER, "max");
+
+    return { success: true, data: undefined };
+  } catch (error) {
+    console.error("Failed to update order status:", error);
+    return { success: false, error: "Failed to update order status" };
+  }
+}
