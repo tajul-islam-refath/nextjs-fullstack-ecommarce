@@ -7,6 +7,8 @@ import React, {
   useEffect,
   useMemo,
 } from "react";
+import { addToCart as addToCartAction } from "@/lib/actions/cart";
+import { toast } from "sonner";
 
 // Types (mirrored from ProductInfo for now, but should ideally be shared)
 interface Variant {
@@ -138,13 +140,20 @@ export function ProductProvider({ children, product }: ProductProviderProps) {
     }
   };
 
-  const addToCart = () => {
-    // TODO: Implement actual cart logic here
-    console.log("Add to cart", {
-      productId: product.id,
-      variantId: selectedVariant?.id,
-      quantity,
-    });
+  const addToCart = async () => {
+    try {
+      await addToCartAction(product.id, selectedVariant?.id || null, quantity);
+      toast.success("Added to cart!", {
+        description: `${quantity}x ${product.name} ${
+          selectedVariant ? `(${selectedVariant.name})` : ""
+        }`,
+      });
+    } catch (error) {
+      toast.error("Failed to add to cart", {
+        description:
+          error instanceof Error ? error.message : "Please try again",
+      });
+    }
   };
 
   const buyNow = () => {

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Search, ShoppingCart } from "lucide-react";
 import { useState } from "react";
+import { CartCount } from "./CartCount";
 
 export function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -58,9 +59,7 @@ export function Navbar() {
           >
             <ShoppingCart className="h-6 w-6" />
             {/* Cart Badge */}
-            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-(--primary-600) text-xs font-semibold text-white">
-              0
-            </span>
+            <CartCount />
           </Link>
         </div>
       </div>
