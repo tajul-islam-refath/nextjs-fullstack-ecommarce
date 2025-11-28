@@ -110,6 +110,7 @@ export default function CheckoutClient({
     try {
       const result = await placeOrder(data);
       if (result.success) {
+        window.dispatchEvent(new Event("cart-updated"));
         toast.success("Order placed successfully!");
         router.push(`/checkout/success/${result.data.orderId}`);
       } else {
@@ -284,7 +285,7 @@ export default function CheckoutClient({
                             );
                         return (
                           <div key={item.id} className="flex gap-4 py-2">
-                            <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border bg-white">
+                            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border bg-white">
                               {item.product.images[0]?.url ? (
                                 <Image
                                   src={item.product.images[0].url}

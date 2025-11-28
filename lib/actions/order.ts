@@ -4,9 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { createOrderSchema, CreateOrderInput } from "@/lib/validations/order";
 import { getCart, clearCart } from "@/lib/actions/cart";
 import { getDeliveryCostByZoneAction } from "@/lib/actions/delivery";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { ActionResult } from "@/lib/auth-utils";
+import { TAGS } from "../constains";
 
 export async function placeOrder(
   data: CreateOrderInput
@@ -97,6 +98,10 @@ export async function placeOrder(
     await clearCart();
 
     revalidatePath("/admin/orders");
+    revalidatePath("/admin/products");
+    revalidatePath("/api/products");
+    revalidatePath("/api/orders");
+    revalidateTag(TAGS.PRODUCT, "max");
 
     return { success: true, data: { orderId: order.id } };
   } catch (error) {
