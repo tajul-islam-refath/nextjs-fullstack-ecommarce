@@ -26,6 +26,7 @@ model User {
   accounts Account[]
   sessions Session[]
   cart     Cart?
+  orders   Order[]
 }
 
 model Account {
@@ -118,6 +119,7 @@ model Product {
   variants       ProductVariant[]
   variantOptions VariantOption[]
   cartItems      CartItem[]
+  orderItems     OrderItem[]
 
   @@index([slug])
   @@index([categoryId])
@@ -184,8 +186,9 @@ model ProductVariant {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
-  cartItems CartItem[]
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cartItems  CartItem[]
+  orderItems OrderItem[]
 
   @@index([productId])
   @@index([sku])
@@ -270,4 +273,83 @@ model DeliveryCost {
   updatedAt DateTime     @updatedAt
 
   @@index([zone])
+}
+
+model Order {
+  id String @id @default(cuid())
+
+  // Customer Info
+  customerName    String
+  customerMobile  String
+  customerAddress String
+
+  // Delivery Info
+  deliveryZone DeliveryZone
+
+  // Order Status
+  status OrderStatus @default(PENDING)
+
+  // Payment Info
+  paymentMethod String?       @default("COD")
+  paymentStatus PaymentStatus @default(PENDING)
+
+  // Financials
+  subtotal     Decimal @db.Decimal(10, 2)
+  deliveryCost Decimal @db.Decimal(10, 2)
+  totalAmount  Decimal @db.Decimal(10, 2)
+
+  // Relations
+  items OrderItem[]
+
+  // Optional User link
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([customerMobile])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  productId String
+  variantId String?
+
+  // Snapshot of product details
+  productName  String
+  variantName  String?
+  sku          String?
+  productImage String?
+
+  price    Decimal @db.Decimal(10, 2)
+  quantity Int
+
+  order   Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product         @relation(fields: [productId], references: [id])
+  variant ProductVariant? @relation(fields: [variantId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+  @@index([variantId])
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
 }
