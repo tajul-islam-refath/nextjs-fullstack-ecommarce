@@ -27,7 +27,7 @@ import { ZodError } from "zod";
 export async function GET(request: NextRequest) {
   try {
     // Parse and validate query parameters
-    const { searchParams } = new URL(request.url);
+    const searchParams = request.nextUrl.searchParams;
     const queryParams = {
       page: searchParams.get("page") || undefined,
       limit: searchParams.get("limit") || undefined,

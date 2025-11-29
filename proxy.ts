@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { auth } from "./auth";
 
-export { auth as middleware } from "@/auth";
-
-export function proxy(request: NextRequest) {
+export default auth((request: NextRequest & { auth: any }) => {
   const requestHeaders = new Headers(request.headers);
   let guestToken = request.cookies.get("guest_session")?.value;
 
@@ -32,7 +31,7 @@ export function proxy(request: NextRequest) {
   }
 
   return response;
-}
+});
 
 export const config = {
   matcher: [

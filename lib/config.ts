@@ -15,8 +15,8 @@ export const getBaseUrl = (): string => {
   }
 
   // Development fallback
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
+  if (process.env.PRODUCTION_URL) {
+    return `https://${process.env.PRODUCTION_URL}`;
   }
 
   return "http://localhost:3000";

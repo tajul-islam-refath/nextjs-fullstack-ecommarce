@@ -1,5 +1,6 @@
 import { apiConfig } from "@/lib/config";
 import { TAGS } from "../constains";
+import { cookies } from "next/headers";
 
 /**
  * Fetch products with given query parameters.
@@ -16,8 +17,14 @@ export async function fetchProducts(params: Record<string, string | number>) {
     apiConfig.endpoints.products
   }?${query.toString()}`;
 
+  const cookieStore = await cookies();
+
   const response = await fetch(apiUrl, {
     cache: "force-cache",
+    credentials: "include",
+    headers: {
+      Cookie: cookieStore.toString(),
+    },
     next: {
       tags: [TAGS.PRODUCT],
     },

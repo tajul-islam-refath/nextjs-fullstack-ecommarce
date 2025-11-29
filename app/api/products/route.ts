@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { productPaginationQuerySchema } from "@/lib/validations/product";
 import { cacheConfig } from "@/lib/config";
 import { ZodError } from "zod";
+import { auth } from "@/auth";
 
 /**
  * GET /api/products
@@ -24,9 +25,16 @@ import { ZodError } from "zod";
  * - sortOrder: asc | desc (default: desc)
  */
 export async function GET(request: NextRequest) {
+  // Get the session
+  const session = await auth();
+
+  if (!session) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
   try {
     // Parse and validate query parameters
-    const { searchParams } = new URL(request.url);
+    const searchParams = request.nextUrl.searchParams;
     const queryParams = {
       page: searchParams.get("page") || undefined,
       limit: searchParams.get("limit") || undefined,

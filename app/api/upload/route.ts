@@ -3,6 +3,7 @@ import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { existsSync } from "fs";
 import sharp from "sharp";
+import { auth } from "@/auth";
 
 const UPLOAD_DIR = join(process.cwd(), "public", "uploads");
 
@@ -56,6 +57,11 @@ async function compressImage(buffer: Buffer): Promise<Buffer> {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
     const formData = await request.formData();
     const files = formData.getAll("files") as File[];
 

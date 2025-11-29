@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { uploadImage } from "@/lib/api/upload-image";
 
 export interface UploadedFile {
   originalName: string;
@@ -157,19 +158,7 @@ export function ImageUploadModal({
         formData.append("files", file);
       });
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || ""}/api/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Upload failed");
-      }
+      const data = await uploadImage(formData);
 
       setUploadProgress(100);
       toast.success(`Successfully uploaded ${data.files.length} file(s)`);
