@@ -115,6 +115,7 @@ export async function placeOrder(
 
 /**
  * Update order status
+ * Automatically updates payment status to PAID when order is marked as DELIVERED
  */
 export async function updateOrderStatus(
   orderId: string,
@@ -127,10 +128,18 @@ export async function updateOrderStatus(
       return { success: false, error: "Invalid order status" };
     }
 
+    // Prepare update data
+    const updateData: any = { status: status as any };
+
+    // If order is marked as DELIVERED, automatically set payment status to PAID
+    if (status === orderConfig.statuses.DELIVERED) {
+      updateData.paymentStatus = orderConfig.paymentStatuses.PAID;
+    }
+
     // Update order
     await prisma.order.update({
       where: { id: orderId },
-      data: { status: status as any },
+      data: updateData,
     });
 
     // Revalidate caches
