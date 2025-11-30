@@ -46,19 +46,19 @@ export const navigationItems: NavItem[] = [
     href: "/admin/orders",
     icon: ShoppingCart,
   },
-  {
-    label: "Customers",
-    href: "/admin/customers",
-    icon: Users,
-  },
+  // {
+  //   label: "Customers",
+  //   href: "/admin/customers",
+  //   icon: Users,
+  // },
   {
     label: "Analytics",
     href: "/admin/analytics",
     icon: BarChart3,
   },
-  {
-    label: "Settings",
-    href: "/admin/settings",
-    icon: Settings,
-  },
+  // {
+  //   label: "Settings",
+  //   href: "/admin/settings",
+  //   icon: Settings,
+  // },
 ];

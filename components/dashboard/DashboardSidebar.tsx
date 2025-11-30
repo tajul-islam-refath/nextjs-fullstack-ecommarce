@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { X } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { DashboardSidebarProps } from './types';
-import { navigationItems } from './navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { X } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { DashboardSidebarProps } from "./types";
+import { navigationItems } from "./navigation";
 
 /**
  * DashboardSidebar Component
- * 
+ *
  * Features:
  * - Sticky positioning for desktop
  * - Collapsible on mobile with overlay
@@ -35,12 +35,12 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
       <aside
         className={cn(
           // Base styles
-          'fixed lg:sticky top-0 left-0 z-50 h-screen bg-white border-r border-slate-200',
-          'w-64 flex flex-col',
+          "fixed lg:sticky top-0 left-0 z-50 h-screen bg-white border-r border-slate-200",
+          "w-64 flex flex-col",
           // Transition
-          'transition-transform duration-300 ease-in-out',
+          "transition-transform duration-300 ease-in-out",
           // Mobile: slide in/out
-          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         {/* Logo Section */}
@@ -49,9 +49,7 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
             <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">E</span>
             </div>
-            <span className="font-bold text-lg text-slate-900">
-              E-Commerce
-            </span>
+            <span className="font-bold text-lg text-slate-900">E-Commerce</span>
           </Link>
 
           {/* Mobile Close Button */}
@@ -78,12 +76,12 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
                     onClick={onClose}
                     className={cn(
                       // Base styles
-                      'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200',
-                      'group relative',
+                      "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+                      "group relative",
                       // Active state
                       isActive
-                        ? 'bg-blue-50 text-blue-700 font-medium'
-                        : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                        ? "bg-blue-50 text-blue-700 font-medium"
+                        : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                     )}
                   >
                     {/* Active indicator */}
@@ -93,10 +91,10 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
 
                     <Icon
                       className={cn(
-                        'w-5 h-5 transition-colors',
+                        "w-5 h-5 transition-colors",
                         isActive
-                          ? 'text-blue-600'
-                          : 'text-slate-500 group-hover:text-slate-700'
+                          ? "text-blue-600"
+                          : "text-slate-500 group-hover:text-slate-700"
                       )}
                     />
 

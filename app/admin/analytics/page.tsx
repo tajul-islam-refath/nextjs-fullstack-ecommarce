@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
 import { getAnalyticsData } from "@/lib/actions/dashboard.actions";
 import AnalyticsClient from "@/components/admin/analytics/AnalyticsClient";
+import { cacheLife } from "next/cache";
 
 export const metadata = {
   title: "Analytics | Admin Dashboard",
@@ -32,6 +33,8 @@ export default function AnalyticsPage() {
 }
 
 async function AnalyticsContent() {
+  "use cache";
+  cacheLife("minutes");
   // Initial load with default 7d period
   const result = await getAnalyticsData("7d");
 
