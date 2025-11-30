@@ -17,7 +17,7 @@ export default function OrderNotFound() {
         </p>
         <Button
           asChild
-          className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+          className="bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
         >
           <Link href="/admin/orders">
             <ArrowLeft className="h-4 w-4 mr-2" />

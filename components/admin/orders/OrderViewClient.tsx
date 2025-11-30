@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { useReactToPrint } from "react-to-print";
 import {
   ArrowLeft,
   Package,
@@ -16,6 +17,7 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
+  Printer,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +30,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { UpdateOrderStatusDialog } from "./UpdateOrderStatusDialog";
+import { InvoiceTemplate } from "./InvoiceTemplate";
 import { formatPrice } from "@/lib/utils";
 import { orderConfig } from "@/lib/config";
 import { OrderStatus } from "@/app/generated/prisma/enums";
@@ -69,6 +72,15 @@ export default function OrderViewClient({ order }: OrderViewClientProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [statusDialog, setStatusDialog] = useState(false);
+  const invoiceRef = useRef<HTMLDivElement>(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef: invoiceRef,
+    documentTitle: `Invoice-${order.id.slice(0, 12).toUpperCase()}`,
+    onAfterPrint: () => {
+      toast.success("Invoice printed successfully!");
+    },
+  });
 
   const handleUpdateStatus = async (
     orderId: string,
@@ -111,13 +123,23 @@ export default function OrderViewClient({ order }: OrderViewClientProps) {
             </p>
           </div>
         </div>
-        <Button
-          onClick={() => setStatusDialog(true)}
-          className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-        >
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Update Status
-        </Button>
+        <div className="flex gap-3">
+          <Button
+            onClick={handlePrint}
+            variant="outline"
+            className="border-slate-300 hover:bg-slate-50"
+          >
+            <Printer className="h-4 w-4 mr-2" />
+            Print Invoice
+          </Button>
+          <Button
+            onClick={() => setStatusDialog(true)}
+            className="bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Update Status
+          </Button>
+        </div>
       </div>
 
       {/* Status Overview Cards */}
@@ -212,7 +234,7 @@ export default function OrderViewClient({ order }: OrderViewClientProps) {
                     {index > 0 && <Separator className="my-4" />}
                     <div className="flex gap-4">
                       {/* Product Image */}
-                      <div className="relative h-20 w-20 flex-shrink-0 rounded-lg overflow-hidden bg-slate-100">
+                      <div className="relative h-20 w-20 shrink-0 rounded-lg overflow-hidden bg-slate-100">
                         {item.productImage ? (
                           <Image
                             src={item.productImage}
@@ -372,6 +394,11 @@ export default function OrderViewClient({ order }: OrderViewClientProps) {
         onConfirm={handleUpdateStatus}
         isUpdating={isPending}
       />
+
+      {/* Hidden Invoice Template for Printing */}
+      <div className="hidden">
+        <InvoiceTemplate ref={invoiceRef} order={order} />
+      </div>
     </div>
   );
 }
