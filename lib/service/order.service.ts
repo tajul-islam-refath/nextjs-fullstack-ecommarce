@@ -142,4 +142,66 @@ export class OrderService {
       totalRevenue: Number(totalRevenue._sum.totalAmount || 0),
     };
   }
+  /**
+   * Get sales analytics grouped by date
+   */
+  async getSalesAnalytics(startDate: Date, endDate: Date) {
+    const orders = await this.prisma.order.findMany({
+      where: {
+        createdAt: {
+          gte: startDate,
+          lte: endDate,
+        },
+        status: {
+          not: orderConfig.statuses.CANCELLED,
+        },
+      },
+      select: {
+        createdAt: true,
+        totalAmount: true,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+    // Group by date
+    const salesByDate = orders.reduce((acc, order) => {
+      const date = order.createdAt.toISOString().split("T")[0];
+      if (!acc[date]) {
+        acc[date] = { date, sales: 0, orders: 0 };
+      }
+      acc[date].sales += Number(order.totalAmount);
+      acc[date].orders += 1;
+      return acc;
+    }, {} as Record<string, { date: string; sales: number; orders: number }>);
+
+    return Object.values(salesByDate).sort((a, b) =>
+      a.date.localeCompare(b.date)
+    );
+  }
+
+  /**
+   * Get top selling products
+   */
+  async getTopSellingProducts(limit: number = 5) {
+    const topProducts = await this.prisma.orderItem.groupBy({
+      by: ["productId", "productName"],
+      _sum: {
+        quantity: true,
+      },
+      orderBy: {
+        _sum: {
+          quantity: "desc",
+        },
+      },
+      take: limit,
+    });
+
+    return topProducts.map((item) => ({
+      id: item.productId,
+      name: item.productName,
+      quantity: item._sum.quantity || 0,
+    }));
+  }
 }
